@@ -10,13 +10,15 @@ function readJSON(file) {
   }
 }
 
-// Write to a .tmp file first, then atomically rename — prevents corruption if the
-// process crashes mid-write.
 function writeJSON(file, data) {
-  const tmp = file + '.tmp';
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
-  fs.renameSync(tmp, file);
+  try {
+    const tmp = file + '.tmp';
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(tmp, file);
+  } catch {
+    // read-only filesystem (e.g. Vercel) — writes are no-ops
+  }
 }
 
 function readOrder(ref, storeDir) {

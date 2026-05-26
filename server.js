@@ -2,11 +2,12 @@ require('dotenv').config();
 
 const express       = require('express');
 const session       = require('express-session');
-const FileStore     = require('session-file-store')(session);
 const compression   = require('compression');
 const path          = require('path');
 const fs            = require('fs');
 const crypto        = require('crypto');
+
+const IS_VERCEL = !!process.env.VERCEL;
 
 const { securityHeaders, sanitizeBody } = require('./middleware/security');
 const { readJSON, writeJSON, readOrder, readAllOrders, readUsers, writeUsers } = require('./utils/db');
@@ -30,13 +31,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
 }));
 
 // ── SESSION ──────────────────────────────────
-app.use(session({
-  store: new FileStore({
-    path:         path.join(__dirname, 'data/sessions'),
-    ttl:          86400,
-    reapInterval: 3600,
-    logFn:        () => {},
-  }),
+const sessionConfig = {
   secret:            process.env.SESSION_SECRET || 'ninja9it-fallback-secret',
   resave:            false,
   saveUninitialized: false,
@@ -45,8 +40,21 @@ app.use(session({
     maxAge:   86400000,
     httpOnly: true,
     sameSite: 'lax',
+    secure:   IS_VERCEL,
   },
-}));
+};
+
+if (!IS_VERCEL) {
+  const FileStore = require('session-file-store')(session);
+  sessionConfig.store = new FileStore({
+    path:         path.join(__dirname, 'data/sessions'),
+    ttl:          86400,
+    reapInterval: 3600,
+    logFn:        () => {},
+  });
+}
+
+app.use(session(sessionConfig));
 
 // ── ATTACH CART + USER + SETTINGS TO EVERY RESPONSE ────
 const SETTINGS_FILE = path.join(__dirname, 'data/settings.json');
