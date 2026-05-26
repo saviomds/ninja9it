@@ -1,0 +1,6 @@
+node_modules
+app/build
+app/.gradle
+*.apk
+*.keystore
+data/sessions

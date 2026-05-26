@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('http'\\).get\\('http://localhost:3000/manifest.json', r => { let d=''; r.on\\('data',c=>d+=c\\); r.on\\('end',\\(\\)=>console.log\\(d\\)\\); }\\).on\\('error', e => console.log\\('SERVER DOWN:', e.message\\)\\)\")",
+      "Bash(node -e \"const fs=require\\('fs'\\);let d='';process.stdin.on\\('data',c=>d+=c\\);process.stdin.on\\('end',\\(\\)=>{const p=JSON.parse\\(d\\);console.log\\(JSON.stringify\\({deps:Object.keys\\(p.dependencies||{}\\),devDeps:Object.keys\\(p.devDependencies||{}\\)},null,2\\)\\)}\\)\")",
+      "Bash(node scripts/gen-icons.js)",
+      "Bash(node -e ' *)",
+      "Bash(\"C:/Users/Dell/.bubblewrap/jdk/jdk-17.0.11+9/bin/keytool.exe\" -genkeypair -v -keystore android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass 0987654321 -keypass 0987654321 -dname \"CN=Ninja9IT, OU=App, O=Ninja9IT, L=PortLouis, S=Mauritius, C=MU\")",
+      "Bash(\"C:/Users/Dell/.bubblewrap/jdk/jdk-17.0.11+9/bin/java.exe\" -Xmx1024M -Xss1m -jar \"C:/Users/Dell/.bubblewrap/android_sdk/build-tools/34.0.0/lib/apksigner.jar\" sign --ks android.keystore --ks-key-alias android --ks-pass pass:0987654321 --key-pass pass:0987654321 --out app-release-signed.apk app-release-unsigned-aligned.apk)"
+    ]
+  }
+}

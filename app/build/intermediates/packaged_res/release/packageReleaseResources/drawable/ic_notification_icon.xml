@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+  <!-- Ninja mask top band -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M2,9 Q2,6 12,6 Q22,6 22,9 L22,11 Q22,11 12,11 Q2,11 2,11 Z"/>
+
+  <!-- Left eye -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M4,12 Q4,10.5 6.5,10.5 Q9,10.5 9,12 Q9,13.5 6.5,13.5 Q4,13.5 4,12 Z"/>
+
+  <!-- Right eye -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M15,12 Q15,10.5 17.5,10.5 Q20,10.5 20,12 Q20,13.5 17.5,13.5 Q15,13.5 15,12 Z"/>
+
+  <!-- Face lower -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M4,14 Q4,18 12,18 Q20,18 20,14 L20,13.5 Q20,15 12,15 Q4,15 4,13.5 Z"/>
+
+</vector>
