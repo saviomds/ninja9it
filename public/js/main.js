@@ -224,6 +224,18 @@
   onScroll();
 })();
 
+// ── HERO PADDING (clears fixed navbar on any screen) ──
+(function () {
+  const nav  = document.getElementById('navbar');
+  const hero = document.getElementById('hero');
+  if (!nav || !hero) return;
+  function fix() {
+    hero.style.paddingTop = (nav.offsetHeight + 20) + 'px';
+  }
+  fix();
+  window.addEventListener('resize', fix);
+})();
+
 // ── HAMBURGER ─────────────────────────────
 (function () {
   const burger   = document.getElementById('navBurger');

@@ -465,7 +465,7 @@ footer{background:#050505;border-top:1px solid var(--border)}
 }
 @media(max-width:768px){
   .nav-links{display:none}.nav-cta{display:none}.nav-burger{display:flex}
-  #hero{flex-direction:column;text-align:center;padding-top:calc(var(--nav-h)+24px);padding-bottom:80px;gap:36px;align-items:center}
+  #hero{flex-direction:column;text-align:center;padding-top:calc(var(--nav-h)+20px);padding-bottom:80px;gap:36px;align-items:center}
   .hero-left{max-width:100%}.hero-actions{justify-content:center}.hero-stats{justify-content:center}
   .hero-right{width:100%;max-width:310px}
   .steps-grid{flex-direction:column}.step-arrow{display:none}

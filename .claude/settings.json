@@ -7,7 +7,10 @@
       "Bash(node -e ' *)",
       "Bash(\"C:/Users/Dell/.bubblewrap/jdk/jdk-17.0.11+9/bin/keytool.exe\" -genkeypair -v -keystore android.keystore -alias android -keyalg RSA -keysize 2048 -validity 10000 -storepass 0987654321 -keypass 0987654321 -dname \"CN=Ninja9IT, OU=App, O=Ninja9IT, L=PortLouis, S=Mauritius, C=MU\")",
       "Bash(\"C:/Users/Dell/.bubblewrap/jdk/jdk-17.0.11+9/bin/java.exe\" -Xmx1024M -Xss1m -jar \"C:/Users/Dell/.bubblewrap/android_sdk/build-tools/34.0.0/lib/apksigner.jar\" sign --ks android.keystore --ks-key-alias android --ks-pass pass:0987654321 --key-pass pass:0987654321 --out app-release-signed.apk app-release-unsigned-aligned.apk)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(vercel --prod)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }; Write-Host \"Done\")",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }; Write-Host \"Port cleared\")"
     ]
   }
 }
