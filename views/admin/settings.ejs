@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">⚙️ Settings</div>
+    </div>
+
+    <div class="admin-content">
+
+      <% if (saved) { %>
+      <div class="settings-alert settings-alert--success">✅ Settings saved successfully.</div>
+      <% } %>
+
+      <form method="POST" action="/admin/settings" class="settings-form">
+
+        <!-- Contact Info -->
+        <div class="settings-card">
+          <div class="settings-card-head">📞 Contact Details</div>
+          <p class="settings-card-desc">These appear on the call widget, order tracking page, My Orders, and footer.</p>
+
+          <div class="settings-grid">
+            <div class="settings-group">
+              <label>Display Phone Number</label>
+              <input type="text" name="phone" value="<%= settings.phone || '' %>" placeholder="+230 5XXX XXXX" />
+              <span class="settings-hint">Shown as text on buttons (e.g. +230 5712 3456)</span>
+            </div>
+            <div class="settings-group">
+              <label>Phone Raw (for tel: link)</label>
+              <input type="text" name="phoneRaw" value="<%= settings.phoneRaw || '' %>" placeholder="2305XXXXXXX" />
+              <span class="settings-hint">Digits only — used in href="tel:+..."</span>
+            </div>
+            <div class="settings-group">
+              <label>WhatsApp Number</label>
+              <input type="text" name="whatsapp" value="<%= settings.whatsapp || '' %>" placeholder="2305XXXXXXX" />
+              <span class="settings-hint">Digits only — used in wa.me/ links</span>
+            </div>
+            <div class="settings-group">
+              <label>Business Email</label>
+              <input type="email" name="email" value="<%= settings.email || '' %>" placeholder="info@ninja9it.com" />
+              <span class="settings-hint">Shown in footer and contact sections</span>
+            </div>
+            <div class="settings-group">
+              <label>Business Hours</label>
+              <input type="text" name="hours" value="<%= settings.hours || '' %>" placeholder="24/7" />
+              <span class="settings-hint">e.g. Mon–Sun 10am–2am</span>
+            </div>
+            <div class="settings-group">
+              <label>Address / Zone</label>
+              <input type="text" name="address" value="<%= settings.address || '' %>" placeholder="Mauritius" />
+              <span class="settings-hint">Shown in footer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="settings-card">
+          <div class="settings-card-head">👁 Live Preview</div>
+          <p class="settings-card-desc">How these will appear to customers.</p>
+          <div class="settings-preview">
+            <div class="sp-row"><span>📞 Call link</span><code>tel:+<%= settings.phoneRaw || '...' %></code></div>
+            <div class="sp-row"><span>💬 WhatsApp link</span><code>wa.me/<%= settings.whatsapp || '...' %></code></div>
+            <div class="sp-row"><span>📱 Displayed as</span><strong><%= settings.phone || '...' %></strong></div>
+            <div class="sp-row"><span>📧 Email</span><strong><%= settings.email || '...' %></strong></div>
+            <div class="sp-row"><span>🕐 Hours</span><strong><%= settings.hours || '...' %></strong></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-admin primary" style="margin-top:4px;padding:12px 32px;font-size:.95rem">
+          💾 Save Settings
+        </button>
+
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">👥 Users</div>
+      <div class="admin-topbar-right">
+        <input class="admin-search" id="searchInput" placeholder="🔍 Search users…" oninput="filterRows()" />
+        <span style="font-size:.8rem;color:#555"><%= users.length %> total</span>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Username</th><th>Email</th><th>Role</th>
+              <th>Orders</th><th>Revenue</th><th>Created</th><th>Expires</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!users.length) { %>
+            <tr><td colspan="8"><div class="admin-empty"><div class="empty-icon">👤</div><p>No users found</p></div></td></tr>
+            <% } %>
+            <% users.forEach(function(u) { %>
+            <%
+              const now = new Date();
+              const exp = u.expiresAt ? new Date(u.expiresAt) : null;
+              const expired = exp && now > exp;
+              const hoursLeft = exp ? Math.max(0, Math.round((exp - now) / 3600000)) : null;
+            %>
+            <tr class="user-row" data-search="<%= (u.id+u.username+u.email).toLowerCase() %>">
+              <td class="mono" style="font-size:.72rem"><%= u.id %></td>
+              <td>
+                <strong><%= u.username %></strong>
+                <% if (u.isAdmin) { %><span style="font-size:.65rem;background:rgba(230,57,70,.15);color:#e63946;padding:1px 7px;border-radius:50px;margin-left:6px">Admin</span><% } %>
+              </td>
+              <td style="font-size:.78rem;color:#888"><%= u.email %></td>
+              <td>
+                <span class="status-chip <%= u.isAdmin ? 'confirmed' : 'pending' %>">
+                  <%= u.isAdmin ? '👑 Admin' : '🥷 User' %>
+                </span>
+              </td>
+              <td style="text-align:center">
+                <% const stats = orderStats[u.id]; %>
+                <% if (stats && stats.count > 0) { %>
+                <a href="/admin/orders" style="color:#60a5fa;font-weight:700"><%= stats.count %></a>
+                <% } else { %><span style="color:#444">0</span><% } %>
+              </td>
+              <td style="font-weight:600;color:#c9a227;font-size:.82rem">
+                <% if (stats && stats.revenue > 0) { %>Rs <%= stats.revenue.toLocaleString() %><% } else { %><span style="color:#444">—</span><% } %>
+              </td>
+              <td style="font-size:.76rem;color:#666">
+                <%= new Date(u.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}) %>
+              </td>
+              <td style="font-size:.76rem">
+                <% if (!u.expiresAt) { %>
+                <span style="color:#4ade80">Never</span>
+                <% } else if (expired) { %>
+                <span style="color:#f87171">Expired</span>
+                <% } else { %>
+                <span style="color:#fbbf24"><%= hoursLeft %>h left</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (!u.isAdmin) { %>
+                <form method="POST" action="/admin/users/<%= u.id %>/delete"
+                      onsubmit="return confirm('Delete user <%= u.username %>?')">
+                  <button type="submit" class="btn-admin danger sm">🗑</button>
+                </form>
+                <% } else { %>
+                <span style="font-size:.72rem;color:#444">Protected</span>
+                <% } %>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+function filterRows() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.user-row').forEach(r => {
+    r.style.display = r.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>

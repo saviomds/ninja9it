@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">🍺 Products</div>
+      <div class="admin-topbar-right">
+        <input class="admin-search" id="searchInput" placeholder="🔍 Search products…" oninput="filterCards()" />
+        <a href="/admin/products/new" class="btn-admin primary sm">➕ Add Product</a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Custom Products -->
+      <div class="admin-section-header">
+        <h2>Custom Products <span style="color:#555;font-size:.8rem;font-weight:400">(<%= customProducts.length %>) — editable</span></h2>
+      </div>
+
+      <% if (!customProducts.length) { %>
+      <div class="admin-empty" style="background:#111;border:1px dashed #222;border-radius:13px;margin-bottom:22px">
+        <div class="empty-icon">📦</div>
+        <p>No custom products yet. <a href="/admin/products/new" style="color:#e63946">Add the first one →</a></p>
+      </div>
+      <% } else { %>
+      <div class="admin-products-grid" id="customGrid">
+        <% customProducts.forEach(function(p) { %>
+        <div class="admin-product-card product-card" data-search="<%= (p.name+p.category+(p.tag||'')).toLowerCase() %>">
+          <div class="apc-visual" style="background:<%= p.gradient || 'linear-gradient(135deg,#1a1a1a,#333)' %>">
+            <% if (p.image) { %><img src="<%= p.image %>" alt="<%= p.name %>" />
+            <% } else { %><span class="apc-emoji"><%= p.emoji || '📦' %></span><% } %>
+            <span class="apc-custom-badge">Custom</span>
+          </div>
+          <div class="apc-info">
+            <div class="apc-cat"><%= p.category %></div>
+            <div class="apc-name"><%= p.name %></div>
+            <div class="apc-price">Rs <%= p.price %></div>
+            <div style="font-size:.72rem;color:#555;margin-bottom:8px"><%= p.tag %></div>
+            <div class="apc-actions">
+              <a href="/admin/products/<%= p.id %>/edit" class="btn-admin ghost sm">✏️ Edit</a>
+              <button type="button" class="btn-admin danger sm"
+                data-id="<%= p.id %>" data-name="<%= p.name %>"
+                onclick="openDelModal(this.dataset.id,this.dataset.name)">🗑 Delete</button>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <% } %>
+
+      <!-- Built-in Products by Category -->
+      <% categories.forEach(function(cat) { %>
+      <div class="admin-section-header" style="margin-top:12px">
+        <h2><%= categoryMeta[cat].emoji %> <%= categoryMeta[cat].label %>
+          <span style="color:#555;font-size:.8rem;font-weight:400">(<%= builtInItems[cat].length %>) — built-in</span>
+        </h2>
+      </div>
+      <div class="admin-products-grid">
+        <% builtInItems[cat].forEach(function(p) {
+             const isHidden = hiddenBuiltins.includes(p.id);
+        %>
+        <div class="admin-product-card product-card <%= isHidden ? 'apc--hidden' : '' %>"
+             data-search="<%= (p.name+p.category+(p.tag||'')).toLowerCase() %>">
+          <div class="apc-visual" style="background:<%= p.gradient %>">
+            <span class="apc-emoji"><%= p.emoji %></span>
+            <% if (isHidden) { %><span class="apc-hidden-badge">Hidden</span><% } %>
+          </div>
+          <div class="apc-info">
+            <div class="builtin-badge">Built-in</div>
+            <div class="apc-name"><%= p.name %></div>
+            <div class="apc-price">Rs <%= p.price %></div>
+            <div style="font-size:.72rem;color:#555;margin-bottom:8px"><%= p.tag %></div>
+            <div class="apc-actions">
+              <% if (isHidden) { %>
+              <form method="POST" action="/admin/products/builtin/<%= p.id %>/restore">
+                <button type="submit" class="btn-admin ghost sm">👁 Restore</button>
+              </form>
+              <% } else { %>
+              <form method="POST" action="/admin/products/builtin/<%= p.id %>/hide">
+                <button type="submit" class="btn-admin danger sm">🚫 Hide</button>
+              </form>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <% }); %>
+
+    </div>
+  </main>
+</div>
+
+<!-- Delete Custom Product Modal -->
+<div class="admin-modal-overlay" id="delModal">
+  <div class="admin-modal del-modal">
+    <div class="del-modal-icon">🗑</div>
+    <h3>Delete Product?</h3>
+    <p><span class="del-modal-ref" id="delModalName"></span></p>
+    <p class="del-modal-warn">This action is permanent and cannot be undone.</p>
+    <div class="admin-modal-actions">
+      <button class="btn-admin ghost" onclick="closeDelModal()">Cancel</button>
+      <button class="btn-admin danger" id="delModalConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+<form method="POST" id="delForm" action="" style="display:none"></form>
+
+<script>
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.product-card').forEach(c => {
+    c.style.display = c.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+
+function openDelModal(id, name) {
+  document.getElementById('delModalName').textContent = name;
+  document.getElementById('delForm').action = '/admin/products/' + id + '/delete';
+  document.getElementById('delModal').classList.add('open');
+}
+function closeDelModal() { document.getElementById('delModal').classList.remove('open'); }
+document.getElementById('delModalConfirm').addEventListener('click', () => document.getElementById('delForm').submit());
+document.getElementById('delModal').addEventListener('click', function(e) { if (e.target === this) closeDelModal(); });
+</script>
+</body>
+</html>

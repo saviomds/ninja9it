@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ninja9IT – Stealth Drinks Delivery 🇲🇺</title>
+  <meta name="description" content="Fast, discreet premium drinks delivery across Mauritius. Beers, spirits, wines & more at your door in 30 minutes. Delivered like a ninja." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     LOADING SCREEN
+══════════════════════════════ -->
+<div id="loader">
+  <canvas id="smokeCanvas"></canvas>
+  <div class="loader-inner">
+    <div class="loader-logo-wrap">
+      <img src="public/logo.jpg" alt="Ninja9IT" id="loaderLogo" />
+      <div class="logo-ring r1"></div>
+      <div class="logo-ring r2"></div>
+      <div class="logo-ring r3"></div>
+    </div>
+    <div class="loader-text-block">
+      <h1 id="loaderTitle">NINJA<span>9</span>IT</h1>
+      <p id="loaderSub">STEALTH DRINKS DELIVERY &nbsp;·&nbsp; MAURITIUS 🇲🇺</p>
+    </div>
+    <div class="loader-progress-wrap">
+      <div class="loader-bar-track">
+        <div id="progressFill"></div>
+      </div>
+      <span id="progressPct">0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     MAIN PAGE
+══════════════════════════════ -->
+<div id="mainPage">
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <img src="public/logo.jpg" alt="Ninja9IT" />
+        <span>NINJA<em>9</em>IT</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services" class="nav-link">Services</a></li>
+        <li><a href="#menu" class="nav-link">Menu</a></li>
+        <li><a href="#order" class="nav-link">Order</a></li>
+        <li><a href="#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <a href="#order" class="nav-cta">Order Now</a>
+      <button class="nav-burger" id="navBurger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow g1"></div>
+    <div class="hero-glow g2"></div>
+
+    <div class="hero-left">
+      <div class="hero-badge reveal">
+        <span class="mu-mini-flag"></span>
+        Pour toi, là où tu es &nbsp;· &nbsp;Mauritius
+        <span class="mu-mini-flag"></span>
+      </div>
+      <h1 class="hero-heading reveal">
+        <span class="hl">FAST.</span>
+        <span class="hl">DISCREET.</span>
+        <span class="hl red-grad">DELIVERED<br>LIKE A NINJA.</span>
+      </h1>
+      <p class="hero-desc reveal">
+        From Port Louis to Le Morne. Grand Baie to Mahebourg. Premium drinks at your door in 30 minutes — silent as a shadow, fierce as a ninja.
+      </p>
+      <div class="hero-actions reveal">
+        <a href="#order" class="btn-primary">🥷&nbsp; Deploy My Order</a>
+        <a href="#menu" class="btn-ghost">Browse Menu →</a>
+      </div>
+      <div class="hero-stats reveal">
+        <div class="stat-item">
+          <strong>30<sup>min</sup></strong>
+          <small>Avg Delivery</small>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <strong>200+</strong>
+          <small>Drink Options</small>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <strong>24/7</strong>
+          <small>Available</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right reveal">
+      <div class="ninja-wrap">
+        <img src="public/service.png" alt="Ninja9IT Drinks Delivery" class="hero-poster" />
+        <div class="ninja-aura"></div>
+      </div>
+    </div>
+
+    <a href="#services" class="scroll-cue">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </a>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="section-inner">
+      <div class="section-label reveal">// MISSION BRIEFING</div>
+      <h2 class="section-heading reveal">Why Choose <span class="red-text">Ninja9IT?</span></h2>
+      <p class="section-sub reveal">We operate with ninja precision — fast, discreet, and always on target.</p>
+
+      <div class="services-grid">
+        <div class="svc-card reveal">
+          <div class="svc-icon">⚡</div>
+          <h3>Ninja Fast Delivery</h3>
+          <p>30-minute delivery across major areas. We don't believe in waiting.</p>
+        </div>
+        <div class="svc-card reveal featured-svc">
+          <div class="svc-icon">🔒</div>
+          <h3>Discreet &amp; 100% Secure</h3>
+          <p>Stealth packaging, zero fuss. Your privacy is our priority — every time.</p>
+          <div class="featured-pill">Most Popular</div>
+        </div>
+        <div class="svc-card reveal">
+          <div class="svc-icon">🍾</div>
+          <h3>Premium Selection</h3>
+          <p>Grey Goose, Jameson, Moët &amp; more. Local legends to global classics.</p>
+        </div>
+        <div class="svc-card reveal">
+          <div class="svc-icon">📍</div>
+          <h3>Delivered Across Mauritius</h3>
+          <p>Every major district covered. Beach or party — we deliver anywhere.</p>
+        </div>
+        <div class="svc-card reveal">
+          <div class="svc-icon">🌙</div>
+          <h3>Reliable Every Time</h3>
+          <p>24/7 operation, 365 days. Midnight craving? We've got you covered.</p>
+        </div>
+        <div class="svc-card reveal">
+          <div class="svc-icon">💳</div>
+          <h3>Easy Payments</h3>
+          <p>Cash, card, or Juice Money. Pay your way — always hassle-free.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu">
+    <div class="section-inner">
+      <div class="section-label reveal">// THE ARSENAL</div>
+      <h2 class="section-heading reveal">Our <span class="red-text">Drink Menu</span></h2>
+      <p class="section-sub reveal">Handpicked selection of the finest — local pride and global imports.</p>
+
+      <div class="tab-bar reveal">
+        <button class="tab-btn active" data-tab="beers">🍺 Beers</button>
+        <button class="tab-btn" data-tab="spirits">🥃 Spirits</button>
+        <button class="tab-btn" data-tab="wines">🍷 Wines</button>
+        <button class="tab-btn" data-tab="cocktails">🍹 Cocktails</button>
+        <button class="tab-btn" data-tab="softs">🧃 Softs</button>
+      </div>
+
+      <div class="menu-grid" id="menuGrid"></div>
+    </div>
+  </section>
+
+  <!-- ORDER -->
+  <section id="order">
+    <div class="order-wrap">
+      <div class="order-left reveal">
+        <div class="section-label">// PLACE YOUR ORDER</div>
+        <h2>Ready to <span class="red-text">Strike?</span></h2>
+        <p>Fill in the form and your ninja will be at the door. Fast. Silent. Guaranteed.</p>
+
+        <div class="zone-box">
+          <h4>📍 Delivery Zones</h4>
+          <div class="zones">
+            <span>Port Louis</span><span>Quatre Bornes</span>
+            <span>Curepipe</span><span>Rose Hill</span>
+            <span>Vacoas</span><span>Flic en Flac</span>
+            <span>Grand Baie</span><span>Mahebourg</span>
+            <span>Moka</span><span>Beau Bassin</span>
+            <span>Triolet</span><span>Le Morne</span>
+          </div>
+        </div>
+
+        <div class="order-ninja-visual">
+          <img src="public/logo.jpg" alt="Ninja" />
+        </div>
+      </div>
+
+      <form class="order-form reveal" id="orderForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" name="name" placeholder="Your name" required />
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" name="phone" placeholder="+230 5XXX XXXX" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Delivery Address *</label>
+          <input type="text" name="address" placeholder="Street name, City / District" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Drink Category *</label>
+            <select name="category" required>
+              <option value="">Select…</option>
+              <option>Beers</option>
+              <option>Spirits</option>
+              <option>Wines</option>
+              <option>Cocktails</option>
+              <option>Soft Drinks</option>
+              <option>Mixed Order</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Quantity *</label>
+            <input type="number" name="qty" placeholder="1" min="1" max="100" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Special Instructions</label>
+          <textarea name="notes" placeholder="Specific brands, ice preference, mixers, extra requests…" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Payment Method</label>
+          <div class="pay-opts">
+            <label class="pay-opt">
+              <input type="radio" name="payment" value="cash" checked />
+              <span>💵 Cash</span>
+            </label>
+            <label class="pay-opt">
+              <input type="radio" name="payment" value="card" />
+              <span>💳 Card</span>
+            </label>
+            <label class="pay-opt">
+              <input type="radio" name="payment" value="juice" />
+              <span>📱 Juice Money</span>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>Deploy My Order</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="mu-stripe">
+      <div class="mu-bar red"></div>
+      <div class="mu-bar blue"></div>
+      <div class="mu-bar yellow"></div>
+      <div class="mu-bar green"></div>
+    </div>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="public/logo.jpg" alt="Ninja9IT" />
+        <div>
+          <h3>NINJA<span class="red-text">9</span>IT</h3>
+          <p>Stealth Drinks Delivery<br /><span class="mu-tag">🇲🇺 Proudly Mauritian</span></p>
+          <p class="footer-tagline">"Fast. Discreet. Delivered Like a Ninja."</p>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#hero">Home</a>
+        <a href="#services">Services</a>
+        <a href="#menu">Menu</a>
+        <a href="#order">Order Now</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <p>📞 +230 5XXX XXXX</p>
+        <p>📧 orders@ninja9it.mu</p>
+        <p>⏰ Available 24/7</p>
+        <p>📍 Delivering Across Mauritius</p>
+      </div>
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <div class="social-links">
+          <a href="#" class="soc-btn">📘 Facebook</a>
+          <a href="#" class="soc-btn">📸 Instagram</a>
+          <a href="#" class="soc-btn">💬 WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Ninja9IT. All rights reserved.</p>
+      <p>🇲🇺 Delivering across Mauritius · Drink responsibly · Must be 18+ to order alcohol</p>
+    </div>
+  </footer>
+
+</div><!-- /mainPage -->
+
+<!-- ORDER SUCCESS MODAL -->
+<div id="orderModal" class="modal-overlay">
+  <div class="modal-box">
+    <img src="public/logo.jpg" alt="Ninja" class="modal-ninja" />
+    <h3>Order Deployed! 🥷</h3>
+    <p>Your ninja is on the move.<br />Expected delivery: <strong>~30 minutes</strong></p>
+    <p class="modal-note">We'll call to confirm your order shortly.</p>
+    <button onclick="closeModal()" class="modal-cta">Shadowy Confirmed!</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

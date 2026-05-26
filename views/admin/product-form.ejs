@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title"><%= product ? '✏️ Edit Product' : '➕ Add Product' %></div>
+      <div class="admin-topbar-right">
+        <a href="/admin/products" class="btn-admin ghost sm">← Back</a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <% if (error) { %>
+      <div class="admin-alert error"><span>✕</span> <%= error %></div>
+      <% } %>
+
+      <div class="admin-form-card">
+        <form method="POST" action="<%= product ? '/admin/products/' + product.id + '/edit' : '/admin/products/new' %>" enctype="multipart/form-data">
+
+          <div class="aform-row">
+            <div class="aform-group">
+              <label>Product Name *</label>
+              <input type="text" name="name" value="<%= product ? product.name : '' %>" placeholder="e.g. Marlboro Red" required />
+            </div>
+            <div class="aform-group">
+              <label>Category *</label>
+              <select name="category" required>
+                <% categories.forEach(function(cat) { %>
+                <option value="<%= cat %>" <%= product && product.category===cat ? 'selected':'' %>><%= categoryMeta[cat].emoji %> <%= categoryMeta[cat].label %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <div class="aform-row">
+            <div class="aform-group">
+              <label>Price (Rs) *</label>
+              <input type="number" name="price" value="<%= product ? product.price : '' %>" placeholder="150" min="1" required />
+            </div>
+            <div class="aform-group">
+              <label>Tag / Badge</label>
+              <input type="text" name="tag" value="<%= product ? product.tag : '' %>" placeholder="e.g. Premium · Local · Import" />
+            </div>
+          </div>
+
+          <div class="aform-row">
+            <div class="aform-group">
+              <label>Emoji Icon</label>
+              <input type="text" name="emoji" value="<%= product ? product.emoji : '' %>" placeholder="🍺 🥃 🚬 📦" maxlength="4" />
+            </div>
+            <div class="aform-group">
+              <label>Gradient (CSS)</label>
+              <input type="text" name="gradient" id="gradientInput"
+                value="<%= product ? product.gradient : 'linear-gradient(135deg,#1a1a1a,#333)' %>"
+                placeholder="linear-gradient(135deg,#e63946,#1a1a1a)"
+                oninput="updateGradientPreview(this.value)" />
+              <div class="gradient-preview" id="gradientPreview"
+                style="background:<%= product ? product.gradient : 'linear-gradient(135deg,#1a1a1a,#333)' %>"></div>
+            </div>
+          </div>
+
+          <div class="aform-group">
+            <label>Description</label>
+            <textarea name="desc" placeholder="Short product description…"><%= product ? product.desc : '' %></textarea>
+          </div>
+
+          <!-- Image Upload -->
+          <div class="aform-group">
+            <label>Product Image</label>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" name="image" accept="image/*" id="imageInput" onchange="previewImage(this)" />
+              <span class="uz-icon">📸</span>
+              <p>Drop image here or <strong>click to browse</strong></p>
+              <p style="font-size:.74rem;margin-top:4px">JPG, PNG, WEBP — max 5 MB</p>
+            </div>
+            <% if (product && product.image) { %>
+            <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+              <img src="<%= product.image %>" alt="Current" style="height:60px;border-radius:7px;border:1px solid #222" />
+              <span style="font-size:.78rem;color:#555">Current image — upload new to replace</span>
+            </div>
+            <% } %>
+            <img id="uploadPreview" alt="Preview" />
+          </div>
+
+          <div class="aform-row" style="gap:24px">
+            <div class="aform-check">
+              <input type="checkbox" name="isLocal" id="isLocal" value="1" <%= product && product.isLocal ? 'checked':'' %> />
+              <label for="isLocal">🇲🇺 Local Mauritian Product</label>
+            </div>
+            <div class="aform-check">
+              <input type="checkbox" name="popular" id="popular" value="1" <%= product && product.popular ? 'checked':'' %> />
+              <label for="popular">⭐ Mark as Popular</label>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:8px">
+            <button type="submit" class="btn-admin primary lg">
+              <%= product ? '💾 Save Changes' : '✅ Create Product' %>
+            </button>
+            <a href="/admin/products" class="btn-admin ghost lg">Cancel</a>
+            <% if (product) { %>
+            <form method="POST" action="/admin/products/<%= product.id %>/delete" style="margin-left:auto"
+                  onsubmit="return confirm('Delete <%= product.name %>? This cannot be undone.')">
+              <button type="submit" class="btn-admin danger lg">🗑 Delete</button>
+            </form>
+            <% } %>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+function previewImage(input) {
+  const preview = document.getElementById('uploadPreview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+function updateGradientPreview(val) {
+  document.getElementById('gradientPreview').style.background = val;
+}
+const uz = document.getElementById('uploadZone');
+uz.addEventListener('dragover',  e => { e.preventDefault(); uz.classList.add('dragover'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('dragover'));
+uz.addEventListener('drop',      e => { e.preventDefault(); uz.classList.remove('dragover'); const input = document.getElementById('imageInput'); if (e.dataTransfer.files[0]) { const dt = new DataTransfer(); dt.items.add(e.dataTransfer.files[0]); input.files = dt.files; previewImage(input); } });
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-inner">
+
+<%- include('partials/navbar') %>
+
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-label">// YOUR MISSIONS</div>
+    <h1>My <span class="red-text">Orders</span></h1>
+    <p>Track every deployment. Real-time status updates for all your orders.</p>
+  </div>
+</section>
+
+<section class="myorders-section">
+  <div class="myorders-inner">
+
+    <% if (!orders.length) { %>
+    <div class="myorders-empty">
+      <div class="moe-icon">🥷</div>
+      <h2>No missions yet.</h2>
+      <p>You haven't placed any orders. Browse the menu and deploy your first order!</p>
+      <a href="/menu" class="btn-primary">Browse Menu →</a>
+    </div>
+    <% } else { %>
+
+    <div class="myorders-stats">
+      <div class="mos-card">
+        <span class="mos-val"><%= orders.length %></span>
+        <span class="mos-label">Total Orders</span>
+      </div>
+      <div class="mos-card">
+        <span class="mos-val"><%= orders.filter(o=>o.status==='delivered').length %></span>
+        <span class="mos-label">Delivered</span>
+      </div>
+      <div class="mos-card">
+        <span class="mos-val pending-count"><%= orders.filter(o=>['pending','confirmed'].includes(o.status)).length %></span>
+        <span class="mos-label">Active</span>
+      </div>
+      <div class="mos-card">
+        <span class="mos-val gold">Rs&nbsp;<%= orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+(o.total||0),0).toLocaleString() %></span>
+        <span class="mos-label">Total Spent</span>
+      </div>
+    </div>
+
+    <div class="myorders-list">
+      <% orders.forEach(function(o) { %>
+      <%
+        const active = ['pending','confirmed'].includes(o.status);
+        const statusIcon = {pending:'⏳',confirmed:'✅',delivered:'🚀',cancelled:'❌'}[o.status] || '📦';
+      %>
+      <div class="mo-card <%= active ? 'mo-card--active' : '' %>">
+        <div class="mo-card-top">
+          <div class="mo-ref-row">
+            <span class="mo-ref"><%= o.ref %></span>
+            <span class="mo-status mo-status--<%= o.status %>">
+              <%= statusIcon %> <%= o.status.charAt(0).toUpperCase() + o.status.slice(1) %>
+            </span>
+          </div>
+          <div class="mo-date">
+            <%= new Date(o.placedAt).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}) %>
+            &nbsp;·&nbsp;
+            <%= new Date(o.placedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) %>
+          </div>
+        </div>
+
+        <% if (o.items && o.items.length) { %>
+        <div class="mo-items">
+          <% o.items.forEach(function(item){ %>
+          <span class="mo-item-chip"><%= item.name %> ×<%= item.qty %></span>
+          <% }); %>
+        </div>
+        <% } %>
+
+        <div class="mo-card-bottom">
+          <div class="mo-total">Rs <strong><%= o.total || '—' %></strong></div>
+
+          <% if (active) { %>
+          <div class="mo-eta-inline">
+            <% if (o.status === 'confirmed' && o.confirmedAt) { %>
+            <%
+              const etaMs = new Date(o.confirmedAt).getTime() + 30*60*1000;
+              const eta   = new Date(etaMs).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+            %>
+            🕐 ETA: <strong><%= eta %></strong>
+            <% } else { %>
+            ⏳ Awaiting confirmation
+            <% } %>
+          </div>
+          <% } %>
+
+          <a href="/track/<%= o.ref %>" class="btn-primary mo-track-btn">
+            <%= active ? '📍 Track Live →' : '👁 View Details →' %>
+          </a>
+          <% if (active) { %>
+          <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>?text=Hi%20Ninja9IT!%20I%27m%20tracking%20order%20<%= o.ref %>.%20Can%20you%20update%20me%20please%3F"
+             target="_blank" class="mo-wa-btn" title="WhatsApp about this order">💬</a>
+          <% } %>
+        </div>
+
+        <% if (active) { %>
+        <div class="mo-progress-mini">
+          <div class="mpm-step <%= ['pending','confirmed','delivered'].includes(o.status) ? 'done':'' %>">📋 Placed</div>
+          <div class="mpm-line <%= ['confirmed','delivered'].includes(o.status) ? 'filled':'' %>"></div>
+          <div class="mpm-step <%= ['confirmed','delivered'].includes(o.status) ? 'done':'' %>">✅ Confirmed</div>
+          <div class="mpm-line <%= o.status==='delivered' ? 'filled':'' %>"></div>
+          <div class="mpm-step <%= o.status==='delivered' ? 'done':'' %>">🚀 Delivered</div>
+        </div>
+        <% } %>
+      </div>
+      <% }); %>
+    </div>
+
+    <!-- Contact strip — always visible -->
+    <div class="mo-contact-strip">
+      <div class="mocs-text">
+        <strong>Questions about your order?</strong>
+        <span>Our ninja team is available 24/7.</span>
+      </div>
+      <div class="mocs-actions">
+        <a href="tel:+<%= settings.phoneRaw || '2300000000' %>" class="mocs-btn mocs-btn--call">📞 Call Us</a>
+        <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>?text=Hi%20Ninja9IT!%20I%27d%20like%20an%20update%20on%20my%20order%20please."
+           target="_blank" class="mocs-btn mocs-btn--wa">💬 WhatsApp</a>
+      </div>
+    </div>
+
+    <% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+<script>const SHOW_LOADER = false;</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

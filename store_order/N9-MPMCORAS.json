@@ -1,0 +1,32 @@
+{
+  "ref": "N9-MPMCORAS",
+  "status": "pending",
+  "placedAt": "2026-05-26T08:05:34.900Z",
+  "user": null,
+  "customer": {
+    "name": "Mak",
+    "phone": "53434232",
+    "address": "Beau Bassin Rose Hill",
+    "zone": "Moka"
+  },
+  "payment": "cash",
+  "notes": "",
+  "items": [
+    {
+      "id": "stella-artois",
+      "name": "Stella Artois",
+      "price": 120,
+      "qty": 1,
+      "subtotal": 120
+    },
+    {
+      "id": "guinness",
+      "name": "Guinness",
+      "price": 145,
+      "qty": 1,
+      "subtotal": 145
+    }
+  ],
+  "total": 265,
+  "eta": "30 minutes"
+}

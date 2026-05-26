@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-inner">
+
+<%- include('partials/navbar') %>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-label">// PLACE YOUR ORDER</div>
+    <h1>Ready to <span class="red-text">Strike?</span></h1>
+    <p>Your ninja is standing by. Fill in the form and we deploy immediately.</p>
+  </div>
+</section>
+
+<section class="order-section">
+  <div class="order-wrap">
+
+    <!-- CART COLUMN -->
+    <div class="cart-column">
+      <div class="cart-header">
+        <h2>🛒 Your Cart
+          <span class="cart-item-count" id="cartItemCount">
+            (<%= cartCount %> item<%= cartCount !== 1 ? 's' : '' %>)
+          </span>
+        </h2>
+        <% if (cart.length > 0) { %>
+        <button class="clear-cart-btn" id="clearCartBtn">Clear All</button>
+        <% } %>
+      </div>
+
+      <% if (cart.length === 0) { %>
+      <!-- Empty cart -->
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🥷</div>
+        <h3>Your cart is empty</h3>
+        <p>No drinks yet? Your ninja is waiting. Browse the menu and add some!</p>
+        <a href="/menu" class="btn-primary">Browse Menu →</a>
+      </div>
+      <% } else { %>
+      <!-- Cart items -->
+      <div class="cart-items" id="cartItems">
+        <% cart.forEach(function(item) { %>
+        <div class="cart-item" id="cartrow-<%= item.id %>" data-price="<%= item.price %>">
+          <div class="ci-visual" style="background:<%= item.gradient %>">
+            <span><%= item.emoji %></span>
+          </div>
+          <div class="ci-info">
+            <span class="ci-name"><%= item.name %></span>
+            <span class="ci-price">Rs <%= item.price %> each</span>
+          </div>
+          <div class="ci-qty">
+            <button class="qty-btn minus" data-id="<%= item.id %>">−</button>
+            <span class="qty-val" id="ci-qty-<%= item.id %>"><%= item.qty %></span>
+            <button class="qty-btn plus"  data-id="<%= item.id %>">+</button>
+          </div>
+          <div class="ci-subtotal" id="ci-sub-<%= item.id %>">
+            Rs <%= item.price * item.qty %>
+          </div>
+          <button class="ci-remove" data-id="<%= item.id %>" title="Remove">✕</button>
+        </div>
+        <% }); %>
+      </div>
+
+      <div class="cart-totals" id="cartTotals">
+        <div class="cart-total-row">
+          <span>Subtotal</span>
+          <span id="cartSubtotal">Rs <%= cartTotal %></span>
+        </div>
+        <div class="cart-total-row">
+          <span>Delivery</span>
+          <span class="free-delivery">FREE 🥷</span>
+        </div>
+        <div class="cart-total-row total-final">
+          <span>Total</span>
+          <span id="cartFinalTotal">Rs <%= cartTotal %></span>
+        </div>
+      </div>
+
+      <a href="/menu" class="continue-shopping">← Continue Shopping</a>
+      <% } %>
+    </div>
+
+    <!-- ORDER FORM COLUMN -->
+    <div class="form-column">
+      <% if (cart.length === 0) { %>
+      <div class="form-disabled-notice">
+        <div class="section-label">// ORDER FORM</div>
+        <h2>Add drinks to your cart<br/>to place an <span class="red-text">order.</span></h2>
+        <img src="/logo.jpg" alt="Ninja" class="form-ninja-img" />
+      </div>
+      <% } else { %>
+      <form class="order-form" id="orderForm" novalidate>
+        <div class="form-section-title">📋 Delivery Details</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text"  name="name"    placeholder="Your full name" required />
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel"   name="phone"   placeholder="+230 5XXX XXXX" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Address *</label>
+          <input type="text" name="address" placeholder="Street, City / District" required />
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Zone</label>
+          <select name="zone">
+            <option value="">Select your area</option>
+            <option>Port Louis</option><option>Quatre Bornes</option>
+            <option>Curepipe</option><option>Rose Hill</option>
+            <option>Vacoas</option><option>Flic en Flac</option>
+            <option>Grand Baie</option><option>Mahebourg</option>
+            <option>Moka</option><option>Beau Bassin</option>
+            <option>Triolet</option><option>Le Morne</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Special Instructions</label>
+          <textarea name="notes" placeholder="Specific brands, ice preference, mixers, extra cups…" rows="3"></textarea>
+        </div>
+
+        <div class="form-section-title">💳 Payment Method</div>
+        <div class="pay-opts">
+          <label class="pay-opt">
+            <input type="radio" name="payment" value="cash" checked />
+            <span>💵 Cash</span>
+          </label>
+          <label class="pay-opt">
+            <input type="radio" name="payment" value="card" />
+            <span>💳 Card</span>
+          </label>
+          <label class="pay-opt">
+            <input type="radio" name="payment" value="juice" />
+            <span>📱 Juice Money</span>
+          </label>
+        </div>
+
+        <div class="order-summary-mini">
+          <span>Order Total:</span>
+          <strong id="formTotal">Rs <%= cartTotal %></strong>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>Deploy My Order</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <p class="form-disclaimer">🔒 Secure order · 18+ only · We verify age at delivery</p>
+      </form>
+      <% } %>
+
+      <!-- Zone Info -->
+      <div class="zone-info-box">
+        <h4>📍 Delivery Zones</h4>
+        <div class="zones-list">
+          <span>Port Louis</span><span>Quatre Bornes</span><span>Curepipe</span>
+          <span>Rose Hill</span><span>Vacoas</span><span>Flic en Flac</span>
+          <span>Grand Baie</span><span>Mahebourg</span><span>Moka</span>
+          <span>Beau Bassin</span><span>Triolet</span><span>Le Morne</span>
+        </div>
+        <p class="zone-note">Not in the list? <a href="#" id="callWidgetTrigger">Contact us</a> — we may still deliver!</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+<script>const SHOW_LOADER = false;</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

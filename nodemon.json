@@ -1,0 +1,11 @@
+{
+  "ignore": [
+    "data/sessions/*",
+    "store_order/*",
+    "store_users/*",
+    "data/users.json",
+    "data/products.json",
+    "public/uploads/*"
+  ],
+  "watch": ["server.js", "routes/", "views/", "middleware/", "utils/", "data/drinks.js", "data/reviews.js"]
+}

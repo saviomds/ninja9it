@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">📊 Dashboard</div>
+      <div class="admin-topbar-right">
+        <div class="admin-user-badge"><span>👑</span><span><%= currentUser.username %></span></div>
+        <a href="/menu" target="_blank" class="btn-admin ghost sm">🌐 View Site</a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Stats Row -->
+      <div class="admin-stats">
+        <div class="stat-card">
+          <div class="stat-icon red">📦</div>
+          <div class="stat-info"><strong><%= totalOrders %></strong><small>Total Orders</small></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold">⏳</div>
+          <div class="stat-info"><strong><%= pendingCount %></strong><small>Pending</small></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">💰</div>
+          <div class="stat-info"><strong>Rs <%= revenue.toLocaleString() %></strong><small>Revenue</small></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">🍺</div>
+          <div class="stat-info"><strong><%= productCount %></strong><small>Products</small></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">👥</div>
+          <div class="stat-info"><strong><%= userCount %></strong><small>Users</small></div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="admin-section-header">
+        <h2>Recent Orders</h2>
+        <a href="/admin/orders" class="btn-admin ghost sm">View All →</a>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Ref</th><th>Customer</th><th>Phone</th><th>Items</th>
+              <th>Total</th><th>Status</th><th>Date</th><th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!recentOrders.length) { %>
+            <tr><td colspan="8"><div class="admin-empty"><div class="empty-icon">📭</div><p>No orders yet</p></div></td></tr>
+            <% } %>
+            <% recentOrders.forEach(function(o) { %>
+            <tr>
+              <td class="mono"><%= o.ref %></td>
+              <td>
+                <strong><%= o.customer.name %></strong>
+                <% if (o.user) { %><br/><small style="color:#555;font-size:.72rem">🥷 <%= o.user.username %></small><% } %>
+              </td>
+              <td style="font-size:.8rem"><%= o.customer.phone %></td>
+              <td style="font-size:.76rem;color:#888"><%= o.items.length %> item<%= o.items.length!==1?'s':'' %></td>
+              <td style="font-weight:700;color:#c9a227">Rs&nbsp;<%= o.total %></td>
+              <td><span class="status-chip <%= o.status %>"><%= o.status %></span></td>
+              <td style="font-size:.76rem;white-space:nowrap"><%= new Date(o.placedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) %></td>
+              <td><a href="/admin/orders" class="btn-admin ghost sm">→</a></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-section-header"><h2>Quick Actions</h2></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="/admin/orders" class="btn-admin primary lg">📦 Manage Orders</a>
+        <a href="/admin/products/new" class="btn-admin ghost lg">➕ Add Product</a>
+        <a href="/admin/users"  class="btn-admin ghost lg">👥 Users</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+</body>
+</html>

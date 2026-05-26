@@ -1,0 +1,108 @@
+<!-- PWA Install Banner -->
+<div id="pwaBanner" class="pwa-banner" role="alert" aria-live="polite" style="display:none">
+  <img src="/logo.jpg" alt="Ninja9IT" class="pwa-banner-logo" />
+  <div class="pwa-banner-text">
+    <strong>Install Ninja9IT</strong>
+    <span id="pwaBannerSub">Get the app — fast orders, offline menu</span>
+  </div>
+  <button id="pwaInstallBtn" class="pwa-install-btn">Install</button>
+  <button id="pwaDismissBtn" class="pwa-dismiss-btn" aria-label="Dismiss">✕</button>
+</div>
+
+<!-- PWA Install Pop Card -->
+<div id="pwaCardOverlay" class="pwa-card-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pwaCardTitle">
+  <div class="pwa-card" id="pwaCard">
+    <button class="pwa-card-close" id="pwaCardClose" aria-label="Close">✕</button>
+
+    <div class="pwa-card-hero">
+      <div class="pwa-card-icon-wrap">
+        <img src="/logo.jpg" alt="Ninja9IT" class="pwa-card-icon" />
+        <div class="pwa-card-icon-ring"></div>
+      </div>
+      <div class="pwa-card-badge">📲 Free Install</div>
+    </div>
+
+    <h2 class="pwa-card-title" id="pwaCardTitle">NINJA<span>9</span>IT</h2>
+    <p class="pwa-card-sub">Stealth Drinks Delivery · Mauritius 🇲🇺</p>
+
+    <ul class="pwa-card-perks">
+      <li><span class="pwa-perk-icon">⚡</span><div><strong>Instant Access</strong><small>Launch from home screen in one tap</small></div></li>
+      <li><span class="pwa-perk-icon">📴</span><div><strong>Works Offline</strong><small>Browse the menu without internet</small></div></li>
+      <li><span class="pwa-perk-icon">🚫</span><div><strong>No App Store</strong><small>No download needed — installs in seconds</small></div></li>
+      <li><span class="pwa-perk-icon">🔔</span><div><strong>Order Fast</strong><small>Skip the browser — order like a ninja</small></div></li>
+    </ul>
+
+    <button class="pwa-card-install-btn" id="pwaCardInstallBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M5 14l7 7 7-7"/><path d="M3 21h18"/></svg>
+      Install App
+    </button>
+    <button class="pwa-card-later-btn" id="pwaCardLater">Not now</button>
+  </div>
+</div>
+
+<!-- Floating Call / Contact Widget -->
+<div id="callWidget" class="call-widget">
+  <div class="call-panel" id="callPanel">
+    <div class="call-panel-head">
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>LIVE</span>
+      </div>
+      <span>Contact Ninja9IT</span>
+      <button id="closeCallPanel" aria-label="Close">✕</button>
+    </div>
+
+    <div class="call-options">
+      <a href="tel:+<%= settings.phoneRaw || '2300000000' %>" class="call-opt">
+        <div class="call-opt-icon phone-icon">📞</div>
+        <div>
+          <strong>Call Us Now</strong>
+          <small><%= settings.phone || '+230 5XXX XXXX' %></small>
+        </div>
+      </a>
+      <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>" target="_blank" class="call-opt">
+        <div class="call-opt-icon wa-icon">💬</div>
+        <div>
+          <strong>WhatsApp Order</strong>
+          <small>Chat &amp; order instantly</small>
+        </div>
+      </a>
+      <a href="/order" class="call-opt">
+        <div class="call-opt-icon order-icon">🛒</div>
+        <div>
+          <strong>Order Online</strong>
+          <small>Quick form · 2 minutes</small>
+        </div>
+      </a>
+    </div>
+
+    <div class="call-avail">
+      <span class="avail-dot"></span>
+      Available Now &nbsp;·&nbsp; 24/7 Service
+    </div>
+  </div>
+
+  <button class="call-fab" id="callFab" aria-label="Contact us">
+    <span class="fab-icon">📞</span>
+    <span class="fab-live-dot"></span>
+  </button>
+</div>
+
+<!-- Global Order Success Modal -->
+<div id="orderSuccessModal" class="modal-overlay">
+  <div class="modal-box">
+    <img src="/logo.jpg" alt="Ninja" class="modal-ninja" />
+    <div class="modal-check">✓</div>
+    <h3>Order Deployed! 🥷</h3>
+    <p id="modalOrderRef" class="modal-ref"></p>
+    <p>Your ninja is on the move.<br />Expected delivery: <strong>~30 minutes</strong></p>
+    <p class="modal-note">We'll call you shortly to confirm.</p>
+    <div class="modal-actions">
+      <a id="modalTrackBtn" href="#" class="modal-track-btn" style="display:none">📍 Track Order</a>
+      <button onclick="closeOrderModal()" class="modal-cta">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>

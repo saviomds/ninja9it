@@ -1,0 +1,30 @@
+{
+  "packageId": "com.ninja9it.app",
+  "host": "ninja9it.mu",
+  "name": "Ninja9IT",
+  "launcherName": "Ninja9IT",
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#e63946",
+  "navigationColor": "#0a0a0a",
+  "backgroundColor": "#0a0a0a",
+  "startUrl": "/",
+  "iconUrl": "/logo.jpg",
+  "maskableIconUrl": "/icons/icon.svg",
+  "appVersion": "1.0.0",
+  "appVersionCode": 1,
+  "signingMode": "mine",
+  "generatorApp": "bubblewrap-cli",
+
+  "_readme": [
+    "HOW TO GENERATE THE APK:",
+    "1. npm install -g @bubblewrap/cli",
+    "2. Replace 'host' above with your actual domain (e.g. ninja9it.mu)",
+    "3. Run: bubblewrap init --manifest https://YOUR_DOMAIN/manifest.json",
+    "4. Run: bubblewrap build",
+    "5. You get app-release-signed.apk in the current folder",
+    "6. Share the .apk via WhatsApp, Telegram, Google Drive, or any link",
+    "",
+    "OR use pwabuilder.com (no install needed - just paste your URL)"
+  ]
+}

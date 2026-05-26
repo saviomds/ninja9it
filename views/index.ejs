@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-home">
+
+<!-- LOADER (first visit only) -->
+<% if (showLoader) { %>
+<div id="loader">
+  <canvas id="smokeCanvas"></canvas>
+  <div class="loader-inner">
+    <div class="loader-logo-wrap">
+      <img src="/logo.jpg" alt="Ninja9IT" id="loaderLogo" />
+      <div class="logo-ring r1"></div>
+      <div class="logo-ring r2"></div>
+      <div class="logo-ring r3"></div>
+    </div>
+    <div class="loader-text-block">
+      <h1 id="loaderTitle">NINJA<span>9</span>IT</h1>
+      <p id="loaderSub">STEALTH DRINKS DELIVERY &nbsp;·&nbsp; MAURITIUS 🇲🇺</p>
+    </div>
+    <div class="loader-progress-wrap">
+      <div class="loader-bar-track"><div id="progressFill"></div></div>
+      <span id="progressPct">0%</span>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<%- include('partials/navbar') %>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
+
+  <div class="hero-left">
+    <div class="hero-badge reveal">
+      <span class="mu-mini-flag"></span>
+      Pour toi, là où tu es &nbsp;·&nbsp; Mauritius
+      <span class="mu-mini-flag"></span>
+    </div>
+    <h1 class="hero-heading reveal">
+      <span class="hl">FAST.</span>
+      <span class="hl">DISCREET.</span>
+      <span class="hl red-grad">DELIVERED<br>LIKE A NINJA.</span>
+    </h1>
+    <p class="hero-desc reveal">From Port Louis to Le Morne. Grand Baie to Mahebourg. Premium drinks at your door in 30 minutes — silent as a shadow.</p>
+    <div class="hero-actions reveal">
+      <a href="/order" class="btn-primary">🥷&nbsp; Order Now</a>
+      <a href="/menu"  class="btn-ghost">Browse Menu →</a>
+    </div>
+    <div class="hero-stats reveal">
+      <div class="stat-item"><strong>30<sup>min</sup></strong><small>Avg Delivery</small></div>
+      <div class="stat-sep"></div>
+      <div class="stat-item"><strong>200+</strong><small>Drink Options</small></div>
+      <div class="stat-sep"></div>
+      <div class="stat-item"><strong>24/7</strong><small>Available</small></div>
+    </div>
+  </div>
+
+  <div class="hero-right reveal">
+    <div class="ninja-wrap">
+      <img src="/service.png" alt="Ninja9IT Drinks Delivery" class="hero-poster" />
+      <div class="ninja-aura"></div>
+    </div>
+  </div>
+
+  <a href="#featured" class="scroll-cue">
+    <span>Explore</span>
+    <div class="scroll-line"></div>
+  </a>
+</section>
+
+<!-- ── FEATURED DRINKS ── -->
+<section id="featured" class="section-dark">
+  <div class="section-inner">
+    <div class="section-label reveal">// TOP PICKS</div>
+    <h2 class="section-heading reveal">Featured <span class="red-text">Drinks</span></h2>
+    <p class="section-sub reveal">Add straight to your cart and order in seconds.</p>
+
+    <div class="drinks-grid">
+      <% featured.forEach(function(drink, i) { %>
+      <div class="drink-card reveal" style="animation-delay:<%= i*0.07 %>s">
+        <div class="drink-visual" style="background:<%= drink.gradient %>">
+          <span class="drink-emoji"><%= drink.emoji %></span>
+          <% if (drink.isLocal) { %><span class="local-badge">🇲🇺 Local</span><% } %>
+        </div>
+        <div class="drink-info">
+          <div class="drink-top">
+            <span class="drink-name"><%= drink.name %></span>
+            <span class="drink-price">Rs <%= drink.price %></span>
+          </div>
+          <span class="drink-tag"><%= drink.tag %></span>
+          <p class="drink-desc"><%= drink.desc %></p>
+          <button class="add-to-cart-btn"
+            data-id="<%= drink.id %>"
+            data-name="<%= drink.name %>"
+            data-price="<%= drink.price %>">
+            + Add to Cart
+          </button>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+
+    <div class="view-all-wrap reveal">
+      <a href="/menu" class="btn-outline-red">View Full Menu →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES PREVIEW ── -->
+<section id="services-preview">
+  <div class="section-inner">
+    <div class="section-label reveal">// WHY NINJA9IT</div>
+    <h2 class="section-heading reveal">Built for <span class="red-text">Speed &amp; Stealth</span></h2>
+    <p class="section-sub reveal">Every delivery is executed with ninja precision.</p>
+
+    <div class="svc-preview-grid">
+      <div class="svc-preview-card reveal">
+        <span>⚡</span>
+        <h3>30-Min Delivery</h3>
+        <p>We don't believe in waiting. Your drinks arrive fast.</p>
+      </div>
+      <div class="svc-preview-card reveal">
+        <span>🔒</span>
+        <h3>100% Discreet</h3>
+        <p>Stealth packaging. Your order, your privacy.</p>
+      </div>
+      <div class="svc-preview-card reveal">
+        <span>🍾</span>
+        <h3>Premium Selection</h3>
+        <p>Local legends + global imports. 200+ options.</p>
+      </div>
+      <div class="svc-preview-card reveal">
+        <span>🌙</span>
+        <h3>24/7 Service</h3>
+        <p>Midnight craving? We've got you. Always live.</p>
+      </div>
+    </div>
+
+    <div class="view-all-wrap reveal">
+      <a href="/services" class="btn-outline-red">All Services →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how-it-works" class="section-dark">
+  <div class="section-inner">
+    <div class="section-label reveal">// PROCESS</div>
+    <h2 class="section-heading reveal">How It <span class="red-text">Works</span></h2>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon">📱</div>
+        <h3>Browse &amp; Choose</h3>
+        <p>Pick your drinks from our curated menu of 200+ options.</p>
+      </div>
+      <div class="step-arrow reveal">→</div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-icon">🛒</div>
+        <h3>Add to Cart</h3>
+        <p>Build your order, choose your payment method.</p>
+      </div>
+      <div class="step-arrow reveal">→</div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-icon">🥷</div>
+        <h3>Ninja Delivers</h3>
+        <p>Sit back. Your ninja arrives in 30 minutes or less.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── REVIEWS ── -->
+<section id="reviews">
+  <div class="section-inner">
+    <div class="section-label reveal">// WHAT CUSTOMERS SAY</div>
+    <h2 class="section-heading reveal">Real <span class="red-text">Reviews</span></h2>
+    <p class="section-sub reveal">Trusted by hundreds across Mauritius.</p>
+
+    <div class="reviews-track-wrap">
+      <div class="reviews-track" id="reviewsTrack">
+        <% reviews.forEach(function(r) { %>
+        <div class="review-card">
+          <div class="review-top">
+            <span class="review-avatar"><%= r.avatar %></span>
+            <div>
+              <strong><%= r.name %></strong>
+              <small>📍 <%= r.location %></small>
+            </div>
+            <% if (r.verified) { %><span class="verified-badge">✓ Verified</span><% } %>
+          </div>
+          <div class="review-stars">
+            <% for(let s=0; s<r.rating; s++) { %>★<% } %>
+            <% for(let s=r.rating; s<5; s++) { %>☆<% } %>
+          </div>
+          <p class="review-text">"<%= r.text %>"</p>
+          <div class="review-meta">
+            <span class="review-drink">🍹 <%= r.drink %></span>
+            <span class="review-date"><%= r.date %></span>
+          </div>
+        </div>
+        <% }); %>
+        <!-- Duplicate for infinite loop -->
+        <% reviews.forEach(function(r) { %>
+        <div class="review-card">
+          <div class="review-top">
+            <span class="review-avatar"><%= r.avatar %></span>
+            <div>
+              <strong><%= r.name %></strong>
+              <small>📍 <%= r.location %></small>
+            </div>
+            <% if (r.verified) { %><span class="verified-badge">✓ Verified</span><% } %>
+          </div>
+          <div class="review-stars">
+            <% for(let s=0; s<r.rating; s++) { %>★<% } %>
+          </div>
+          <p class="review-text">"<%= r.text %>"</p>
+          <div class="review-meta">
+            <span class="review-drink">🍹 <%= r.drink %></span>
+            <span class="review-date"><%= r.date %></span>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <div class="trust-row reveal">
+      <div class="trust-badge">🏆 #1 Delivery in MU</div>
+      <div class="trust-badge">🔒 100% Secure</div>
+      <div class="trust-badge">⭐ 4.9/5 Rating</div>
+      <div class="trust-badge">🚀 500+ Orders/Week</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ── -->
+<section class="cta-banner">
+  <div class="cta-banner-glow"></div>
+  <div class="cta-banner-inner reveal">
+    <h2>Ready to Order? <span class="red-text">Deploy Now.</span></h2>
+    <p>Your ninja is standing by — 24/7, across all of Mauritius.</p>
+    <a href="/order" class="btn-primary btn-large">🥷 Order Now →</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+
+<script>const SHOW_LOADER = <%= showLoader ? 'true' : 'false' %>;</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

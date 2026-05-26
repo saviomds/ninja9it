@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-inner">
+
+<%- include('partials/navbar') %>
+
+<section class="profile-section">
+  <div class="profile-inner">
+
+    <!-- Header -->
+    <div class="profile-hero">
+      <div class="profile-avatar-big"><%= user.avatar || '🥷' %></div>
+      <div class="profile-hero-info">
+        <div class="section-label">// YOUR PROFILE</div>
+        <h1><%= user.username %></h1>
+        <p class="profile-email"><%= user.email %></p>
+        <% if (!user.isAdmin && user.expiresAt) { %>
+        <div class="profile-expiry">
+          ⏱ Account expires <%= new Date(user.expiresAt).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}) %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <% if (success) { %>
+    <div class="auth-alert auth-alert--success"><span>✓</span> <%= success %></div>
+    <% } %>
+    <% if (error) { %>
+    <div class="auth-alert auth-alert--error"><span>✕</span> <%= error %></div>
+    <% } %>
+
+    <!-- Stats Row -->
+    <div class="profile-stats">
+      <div class="pstat-card">
+        <span class="pstat-val"><%= stats.total %></span>
+        <span class="pstat-label">Total Orders</span>
+      </div>
+      <div class="pstat-card">
+        <span class="pstat-val"><%= stats.delivered %></span>
+        <span class="pstat-label">Delivered</span>
+      </div>
+      <div class="pstat-card">
+        <span class="pstat-val"><%= stats.active %></span>
+        <span class="pstat-label">Active</span>
+      </div>
+      <div class="pstat-card">
+        <span class="pstat-val gold">Rs <%= stats.spent.toLocaleString() %></span>
+        <span class="pstat-label">Total Spent</span>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+
+      <!-- Edit Info -->
+      <div class="profile-card">
+        <div class="pcard-head">✏️ Edit Info</div>
+
+        <!-- Avatar Picker -->
+        <div class="avatar-picker-wrap" style="margin-bottom:20px">
+          <label class="avatar-picker-label">Choose avatar</label>
+          <div class="avatar-grid">
+            <% const avatars = ['🥷','👤','🧑🏻','🧑🏽','🧑🏾','🧑🏿','👨🏻','👨🏽','👨🏾','👨🏿','👩🏻','👩🏽','👩🏾','👩🏿','🧔🏽','👱🏻']; %>
+            <% avatars.forEach(function(av){ %>
+            <button type="button" class="av-opt <%= av === (user.avatar||'🥷') ? 'av-opt--selected' : '' %>" data-av="<%= av %>"><%= av %></button>
+            <% }); %>
+          </div>
+          <div class="av-preview-row">
+            <div class="av-preview" id="avPreview"><%= user.avatar || '🥷' %></div>
+            <span class="av-preview-hint">Selected avatar</span>
+          </div>
+        </div>
+
+        <form method="POST" action="/profile/update" class="profile-form">
+          <input type="hidden" name="avatar" id="avatarInput" value="<%= user.avatar || '🥷' %>" />
+          <div class="auth-group">
+            <label>Username</label>
+            <input type="text" name="username" value="<%= user.username %>" required
+              pattern="[a-zA-Z0-9_]{3,20}" title="3–20 chars: letters, numbers, underscores" />
+          </div>
+          <div class="auth-group" style="margin-top:14px">
+            <label>Email</label>
+            <input type="email" name="email" value="<%= user.email %>" required />
+          </div>
+          <button type="submit" class="auth-btn" style="margin-top:20px">
+            <span>Save Changes</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Change Password -->
+      <div class="profile-card">
+        <div class="pcard-head">🔒 Change Password</div>
+        <form method="POST" action="/profile/password" class="profile-form">
+          <div class="auth-group">
+            <label>Current Password</label>
+            <input type="password" name="currentPassword" placeholder="Enter current password" required />
+          </div>
+          <div class="auth-group" style="margin-top:14px">
+            <label>New Password</label>
+            <input type="password" name="newPassword" placeholder="Min. 6 characters" required />
+          </div>
+          <div class="auth-group" style="margin-top:14px">
+            <label>Confirm New Password</label>
+            <input type="password" name="confirmPassword" placeholder="Repeat new password" required />
+          </div>
+          <button type="submit" class="auth-btn" style="margin-top:20px;background:#1d4ed8">
+            <span>Update Password</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </button>
+        </form>
+
+        <!-- Account Info -->
+        <div class="profile-account-info">
+          <div class="pai-row"><span>User ID</span><code><%= user.id %></code></div>
+          <div class="pai-row"><span>Member since</span><strong><%= new Date(user.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) %></strong></div>
+          <% if (!user.isAdmin && user.expiresAt) { %>
+          <div class="pai-row"><span>Expires</span><strong class="text-red"><%= new Date(user.expiresAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) %></strong></div>
+          <% } %>
+          <div class="pai-row"><span>Role</span><strong><%= user.isAdmin ? '👑 Admin' : '🥷 Ninja' %></strong></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick links -->
+    <div class="profile-footer-links">
+      <% if (!user.isAdmin) { %>
+      <a href="/my-orders" class="btn-ghost">📦 My Orders</a>
+      <% } %>
+      <a href="/menu" class="btn-ghost">Browse Menu</a>
+      <a href="/logout" class="btn-ghost" style="color:#ff8888;border-color:rgba(255,100,100,.2)">↩ Logout</a>
+    </div>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+<script>const SHOW_LOADER = false;</script>
+<script src="/js/main.js"></script>
+<script>
+(function(){
+  const opts    = document.querySelectorAll('.av-opt');
+  const input   = document.getElementById('avatarInput');
+  const preview = document.getElementById('avPreview');
+  opts.forEach(btn => {
+    btn.addEventListener('click', function(){
+      opts.forEach(b => b.classList.remove('av-opt--selected'));
+      this.classList.add('av-opt--selected');
+      input.value         = this.dataset.av;
+      preview.textContent = this.dataset.av;
+    });
+  });
+})();
+</script>
+</body>
+</html>

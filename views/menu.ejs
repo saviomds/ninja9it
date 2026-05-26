@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-inner">
+
+<%- include('partials/navbar') %>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-glow"></div>
+  <div class="page-hero-content">
+    <div class="section-label">// THE ARSENAL</div>
+    <h1>Our <span class="red-text">Drink Menu</span></h1>
+    <p>Handpicked selection — local pride and global imports. Add to cart and order instantly.</p>
+  </div>
+</section>
+
+<!-- CATEGORY TABS -->
+<section class="menu-section">
+  <div class="section-inner">
+    <div class="category-tabs reveal">
+      <% categories.forEach(function(cat) { %>
+      <a href="/menu?cat=<%= cat %>"
+         class="cat-tab <%= activeCat === cat ? 'active' : '' %>"
+         style="<%= activeCat === cat ? '--tab-color:' + categoryMeta[cat].accent : '' %>">
+        <span class="cat-emoji"><%= categoryMeta[cat].emoji %></span>
+        <span><%= categoryMeta[cat].label %></span>
+        <span class="cat-count"><%= drinks[cat].length %></span>
+      </a>
+      <% }); %>
+    </div>
+
+    <!-- Active category header -->
+    <div class="active-cat-header reveal">
+      <div class="cat-header-visual" style="background:<%= categoryMeta[activeCat].bg %>">
+        <span><%= categoryMeta[activeCat].emoji %></span>
+      </div>
+      <div>
+        <h2><%= categoryMeta[activeCat].label %></h2>
+        <p><%= drinks[activeCat].length %> options available · Add to cart and order instantly</p>
+      </div>
+    </div>
+
+    <!-- Drinks Grid -->
+    <div class="drinks-grid">
+      <% drinks[activeCat].forEach(function(drink, i) { %>
+      <div class="drink-card reveal" style="animation-delay:<%= i*0.06 %>s">
+        <div class="drink-visual" style="background:<%= drink.gradient %>">
+          <span class="drink-emoji"><%= drink.emoji %></span>
+          <div class="drink-visual-overlay"></div>
+          <% if (drink.isLocal) { %>
+          <span class="local-badge">🇲🇺 Local</span>
+          <% } %>
+          <% if (drink.popular) { %>
+          <span class="popular-badge">⭐ Popular</span>
+          <% } %>
+        </div>
+        <div class="drink-info">
+          <div class="drink-top">
+            <span class="drink-name"><%= drink.name %></span>
+            <span class="drink-price">Rs <%= drink.price %></span>
+          </div>
+          <span class="drink-tag"><%= drink.tag %></span>
+          <p class="drink-desc"><%= drink.desc %></p>
+          <div class="drink-card-footer">
+            <div class="qty-control">
+              <button class="qty-btn minus" data-id="<%= drink.id %>">−</button>
+              <span class="qty-val" id="qty-<%= drink.id %>">1</span>
+              <button class="qty-btn plus"  data-id="<%= drink.id %>">+</button>
+            </div>
+            <button class="add-to-cart-btn"
+              data-id="<%= drink.id %>"
+              data-name="<%= drink.name %>"
+              data-price="<%= drink.price %>">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+
+    <!-- Local Favourites Banner -->
+    <div class="local-banner reveal">
+      <div class="local-banner-inner">
+        <span class="flag-stripe-small"></span>
+        <div>
+          <h3>🇲🇺 Proud of Mauritius</h3>
+          <p>We stock the finest local products — Phoenix Beer, Chamarel Rum, Green Island Rum, Eski Cola, and more. Support local.</p>
+        </div>
+        <a href="/order" class="btn-primary">Order Now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+<script>const SHOW_LOADER = false;</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

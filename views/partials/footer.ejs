@@ -1,0 +1,50 @@
+<footer id="contact">
+  <div class="mu-stripe">
+    <div class="mu-bar red"></div>
+    <div class="mu-bar blue"></div>
+    <div class="mu-bar yellow"></div>
+    <div class="mu-bar green"></div>
+  </div>
+
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="/logo.jpg" alt="Ninja9IT" />
+      <div>
+        <h3>NINJA<span class="red-text">9</span>IT</h3>
+        <p>Stealth Drinks Delivery</p>
+        <p class="mu-pride">🇲🇺 Proudly Mauritian</p>
+        <p class="footer-tagline">"Fast. Discreet. Delivered Like a Ninja."</p>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/services">Services</a>
+      <a href="/menu">Full Menu</a>
+      <a href="/order">Order Now</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="tel:+<%= settings.phoneRaw || '2300000000' %>">📞 <%= settings.phone || '+230 5XXX XXXX' %></a>
+      <a href="mailto:<%= settings.email || 'info@ninja9it.com' %>">📧 <%= settings.email || 'info@ninja9it.com' %></a>
+      <p>⏰ <%= settings.hours || '24/7 Available' %></p>
+      <p>📍 <%= settings.address || 'Mauritius' %></p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Follow Us</h4>
+      <div class="social-list">
+        <a href="#" class="soc-link">📘 Facebook</a>
+        <a href="#" class="soc-link">📸 Instagram</a>
+        <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>" class="soc-link wa-link">💬 WhatsApp Us</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Ninja9IT. All rights reserved.</p>
+    <p>🇲🇺 Delivering across Mauritius · Drink responsibly · 18+ only to order alcohol</p>
+  </div>
+</footer>

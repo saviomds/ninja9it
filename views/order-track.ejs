@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-inner">
+
+<%- include('partials/navbar') %>
+
+<section class="track-section">
+  <div class="track-inner">
+
+    <!-- Header -->
+    <div class="track-header">
+      <div class="track-header-left">
+        <div class="section-label">// ORDER TRACKING</div>
+        <h1>Order <span class="red-text"><%= order.ref %></span></h1>
+        <p class="track-date">
+          Placed <%= new Date(order.placedAt).toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}) %>
+          at <%= new Date(order.placedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) %>
+        </p>
+      </div>
+      <div class="track-status-badge track-status-badge--<%= order.status %>">
+        <% if (order.status === 'pending')   { %>⏳ Pending<% } %>
+        <% if (order.status === 'confirmed') { %>✅ Confirmed<% } %>
+        <% if (order.status === 'delivered') { %>🚀 Delivered<% } %>
+        <% if (order.status === 'cancelled') { %>❌ Cancelled<% } %>
+      </div>
+    </div>
+
+    <% if (order.status === 'cancelled') { %>
+    <div class="track-cancelled-box">
+      <div class="tcb-icon">❌</div>
+      <h3>This order was cancelled.</h3>
+      <p>If you think this is a mistake, please contact us.</p>
+      <a href="/order" class="btn-primary">Place New Order →</a>
+    </div>
+    <% } else { %>
+
+    <!-- Progress Tracker -->
+    <div class="track-progress-wrap">
+      <%
+        const steps = [
+          { key:'placed',    label:'Order Placed',  icon:'📋', time: order.placedAt },
+          { key:'confirmed', label:'Confirmed',      icon:'✅', time: order.confirmedAt },
+          { key:'on_way',    label:'On the Way',     icon:'🥷', time: order.confirmedAt },
+          { key:'delivered', label:'Delivered',      icon:'🚀', time: order.deliveredAt }
+        ];
+        const statusStep = { pending:0, confirmed:2, delivered:3 }[order.status] ?? 0;
+      %>
+      <div class="track-steps">
+        <% steps.forEach(function(step, i) { %>
+        <div class="track-step <%= i <= statusStep ? 'track-step--done' : '' %> <%= i === statusStep ? 'track-step--active' : '' %>">
+          <div class="ts-dot-wrap">
+            <div class="ts-dot">
+              <% if (i < statusStep) { %><span class="ts-check">✓</span>
+              <% } else { %><span class="ts-icon"><%= step.icon %></span><% } %>
+            </div>
+            <% if (i < steps.length - 1) { %>
+            <div class="ts-line <%= i < statusStep ? 'ts-line--filled' : '' %>"></div>
+            <% } %>
+          </div>
+          <div class="ts-label"><%= step.label %></div>
+          <% if (step.time && i <= statusStep) { %>
+          <div class="ts-time"><%= new Date(step.time).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) %></div>
+          <% } else if (i > statusStep) { %>
+          <div class="ts-time">—</div>
+          <% } %>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- ETA Banner -->
+    <% if (order.status === 'pending') { %>
+    <div class="track-eta-box track-eta-box--waiting">
+      <div class="teb-icon">⏳</div>
+      <div class="teb-text">
+        <strong>Waiting for confirmation</strong>
+        <p>Your order has been received. Our team will confirm it shortly.</p>
+      </div>
+    </div>
+    <% } else if (order.status === 'confirmed' && etaTime) { %>
+    <div class="track-eta-box track-eta-box--confirmed">
+      <div class="teb-icon">🥷</div>
+      <div class="teb-text">
+        <strong>Your ninja is on the way!</strong>
+        <p>Estimated arrival: <span class="eta-time"><%= etaTime %></span></p>
+      </div>
+      <% if (etaMs) { %>
+      <div class="eta-countdown" id="etaCountdown" data-eta="<%= etaMs %>">
+        <span id="etaMins">—</span>
+        <small>min left</small>
+      </div>
+      <% } %>
+    </div>
+    <% } else if (order.status === 'delivered') { %>
+    <div class="track-eta-box track-eta-box--delivered">
+      <div class="teb-icon">🎉</div>
+      <div class="teb-text">
+        <strong>Order Delivered!</strong>
+        <p>
+          <% if (order.deliveredAt) { %>
+          Delivered at <%= new Date(order.deliveredAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) %>.
+          <% } %>
+          Thank you for ordering from Ninja9IT!
+        </p>
+      </div>
+    </div>
+    <% } %>
+
+    <% } %>
+
+    <!-- Order Details Grid -->
+    <div class="track-details-grid">
+
+      <!-- Items -->
+      <div class="track-card">
+        <div class="tcard-head">📦 Order Items</div>
+        <% if (order.items && order.items.length) { %>
+        <% order.items.forEach(function(item) { %>
+        <div class="tcard-item-row">
+          <span class="tcard-item-name"><%= item.name %></span>
+          <span class="tcard-item-qty">×<%= item.qty %></span>
+          <span class="tcard-item-price">Rs <%= item.subtotal || item.price * item.qty %></span>
+        </div>
+        <% }); %>
+        <div class="tcard-total-row">
+          <span>Total</span>
+          <span class="tcard-total">Rs <%= order.total %></span>
+        </div>
+        <% } else { %>
+        <p style="color:#555;font-size:.85rem">No item data available.</p>
+        <% } %>
+      </div>
+
+      <!-- Customer Info -->
+      <div class="track-card">
+        <div class="tcard-head">👤 Delivery Info</div>
+        <div class="tcard-info-row"><span>Name</span><strong><%= order.customer.name %></strong></div>
+        <div class="tcard-info-row"><span>Phone</span><strong><%= order.customer.phone %></strong></div>
+        <div class="tcard-info-row"><span>Address</span><strong><%= order.customer.address %></strong></div>
+        <% if (order.customer.zone) { %>
+        <div class="tcard-info-row"><span>Zone</span><strong><%= order.customer.zone %></strong></div>
+        <% } %>
+        <div class="tcard-info-row"><span>Payment</span><strong style="text-transform:capitalize"><%= order.payment %></strong></div>
+        <% if (order.notes) { %>
+        <div class="tcard-info-row"><span>Notes</span><strong><%= order.notes %></strong></div>
+        <% } %>
+      </div>
+
+    </div>
+
+    <!-- Contact / Call to Track -->
+    <div class="track-contact-card">
+      <div class="tcc-left">
+        <div class="tcc-icon">📞</div>
+        <div class="tcc-text">
+          <strong>Need an update on your order?</strong>
+          <p>Call or WhatsApp us and mention your order ref — we'll check right away.</p>
+          <div class="tcc-ref-pill">Ref: <span><%= order.ref %></span></div>
+        </div>
+      </div>
+      <div class="tcc-actions">
+        <a href="tel:+<%= settings.phoneRaw || '2300000000' %>" class="tcc-btn tcc-btn--call">
+          <span>📞</span>
+          <div>
+            <strong>Call Us</strong>
+            <small><%= settings.phone || '+230 5XXX XXXX' %></small>
+          </div>
+        </a>
+        <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>?text=Hi%20Ninja9IT!%20I%27m%20tracking%20order%20<%= order.ref %>.%20Can%20you%20give%20me%20an%20update%20please%3F"
+           target="_blank" class="tcc-btn tcc-btn--wa">
+          <span>💬</span>
+          <div>
+            <strong>WhatsApp</strong>
+            <small>Chat instantly</small>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer row -->
+    <div class="track-footer">
+      <% if (!['delivered','cancelled'].includes(order.status)) { %>
+      <p class="track-refresh-note" id="refreshNote">
+        🔄 Auto-refreshing in <span id="refreshCountdown">30</span>s
+      </p>
+      <% } %>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <% if (locals.currentUser && !currentUser.isAdmin) { %>
+        <a href="/my-orders" class="btn-ghost">← My Orders</a>
+        <% } %>
+        <a href="/menu" class="btn-ghost">Browse Menu</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+<script>const SHOW_LOADER = false;</script>
+<script src="/js/main.js"></script>
+<script>
+// ETA countdown
+(function() {
+  const el = document.getElementById('etaMins');
+  const etaMs = <%= etaMs || 'null' %>;
+  if (!el || !etaMs) return;
+  function update() {
+    const left = Math.max(0, Math.round((etaMs - Date.now()) / 60000));
+    el.textContent = left;
+    if (left > 0) setTimeout(update, 30000);
+    else el.closest('.eta-countdown').innerHTML = '<span style="color:#4ade80">Arriving now!</span>';
+  }
+  update();
+})();
+
+// Auto-refresh for live status
+(function() {
+  const status = '<%= order.status %>';
+  if (status === 'delivered' || status === 'cancelled') return;
+  let secs = 30;
+  const cd = document.getElementById('refreshCountdown');
+  const iv = setInterval(() => {
+    secs--;
+    if (cd) cd.textContent = secs;
+    if (secs <= 0) { clearInterval(iv); location.reload(); }
+  }, 1000);
+})();
+</script>
+</body>
+</html>

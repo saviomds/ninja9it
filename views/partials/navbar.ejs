@@ -1,0 +1,74 @@
+<nav id="navbar" class="<%= page !== 'home' ? 'solid' : '' %>">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/logo.jpg" alt="Ninja9IT" />
+      <span>NINJA<em>9</em>IT</span>
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/"         class="nav-link <%= page==='home'     ? 'active':'' %>">Home</a></li>
+      <li><a href="/services" class="nav-link <%= page==='services' ? 'active':'' %>">Services</a></li>
+      <li><a href="/menu"     class="nav-link <%= page==='menu'     ? 'active':'' %>">Menu</a></li>
+      <li><a href="/order"    class="nav-link <%= page==='order'    ? 'active':'' %>">Order</a></li>
+      <% if (locals.currentUser && !currentUser.isAdmin) { %>
+      <li><a href="/my-orders" class="nav-link <%= page==='my-orders'||page==='track' ? 'active':'' %>">📦 My Orders</a></li>
+      <% } %>
+    </ul>
+
+    <div class="nav-right">
+      <a href="/order" class="cart-icon-btn" id="cartBtn" title="View Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-badge" id="cartBadge" style="<%= cartCount===0 ? 'display:none' : '' %>"><%= cartCount %></span>
+      </a>
+
+      <% if (locals.currentUser) { %>
+      <% if (currentUser.isAdmin) { %>
+      <a href="/admin" class="nav-admin-link" title="Admin Panel">⚙️ Admin</a>
+      <% } %>
+      <a href="/profile" class="nav-user-pill" title="My Profile">
+        <span class="nav-user-icon"><%= currentUser.isAdmin ? '👑' : (currentUser.avatar || '🥷') %></span>
+        <span class="nav-username"><%= currentUser.username %></span>
+      </a>
+      <a href="/logout" class="nav-logout-btn" title="Logout">↩</a>
+      <% } else { %>
+      <a href="/login"    class="nav-auth-link">Login</a>
+      <a href="/register" class="nav-cta">Register</a>
+      <% } %>
+    </div>
+
+    <button id="navInstallBtn" class="nav-install-btn" style="display:none" title="Install App">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M5 14l7 7 7-7"/><path d="M3 21h18"/></svg>
+      Install
+    </button>
+
+    <button class="nav-burger" id="navBurger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="/"         class="<%= page==='home'     ? 'active':'' %>">Home</a>
+    <a href="/services" class="<%= page==='services' ? 'active':'' %>">Services</a>
+    <a href="/menu"     class="<%= page==='menu'     ? 'active':'' %>">Menu</a>
+    <a href="/order"    class="<%= page==='order'    ? 'active':'' %>">Order Now</a>
+    <% if (locals.currentUser && !currentUser.isAdmin) { %>
+    <a href="/my-orders" class="<%= page==='my-orders'||page==='track' ? 'active':'' %>">📦 My Orders</a>
+    <% } %>
+    <% if (locals.currentUser) { %>
+    <% if (currentUser.isAdmin) { %>
+    <a href="/admin">⚙️ Admin Panel</a>
+    <% } %>
+    <a href="/profile">👤 My Profile</a>
+    <a href="/logout" class="mobile-logout">↩ Logout (<%= currentUser.username %>)</a>
+    <% } else { %>
+    <a href="/login"    class="<%= page==='login'    ? 'active':'' %>">Login</a>
+    <a href="/register" class="<%= page==='register' ? 'active':'' %>">Register</a>
+    <% } %>
+    <a href="#" id="mobileInstallLink" class="mobile-install-link" style="display:none">📲 Install App</a>
+  </div>
+</nav>

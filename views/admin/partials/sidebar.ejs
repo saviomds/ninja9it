@@ -1,0 +1,58 @@
+<button class="admin-mobile-burger" id="adminBurger" aria-label="Toggle menu">☰</button>
+<div class="admin-sidebar-overlay" id="adminOverlay"></div>
+
+<aside class="admin-sidebar" id="adminSidebar">
+  <div class="admin-brand">
+    <img src="/logo.jpg" alt="Ninja9IT" />
+    <h2>NINJA<em>9</em>IT</h2>
+    <small>Admin Panel</small>
+  </div>
+
+  <nav class="admin-nav">
+    <span class="admin-nav-section">Overview</span>
+    <a href="/admin" class="admin-nav-item <%= adminPage==='dashboard' ? 'active':'' %>">
+      <span class="ni">📊</span><span class="nav-label">Dashboard</span>
+    </a>
+
+    <span class="admin-nav-section">Commerce</span>
+    <a href="/admin/orders" class="admin-nav-item <%= adminPage==='orders' ? 'active':'' %>">
+      <span class="ni">📦</span><span class="nav-label">Orders</span>
+      <% if (typeof pendingCount !== 'undefined' && pendingCount > 0) { %>
+      <span class="nav-badge"><%= pendingCount %></span>
+      <% } %>
+    </a>
+    <a href="/admin/products" class="admin-nav-item <%= adminPage==='products'||adminPage==='product-edit' ? 'active':'' %>">
+      <span class="ni">🍺</span><span class="nav-label">Products</span>
+    </a>
+    <a href="/admin/products/new" class="admin-nav-item <%= adminPage==='product-new' ? 'active':'' %>">
+      <span class="ni">➕</span><span class="nav-label">Add Product</span>
+    </a>
+
+    <span class="admin-nav-section">People</span>
+    <a href="/admin/users" class="admin-nav-item <%= adminPage==='users' ? 'active':'' %>">
+      <span class="ni">👥</span><span class="nav-label">Users</span>
+    </a>
+
+    <span class="admin-nav-section">System</span>
+    <a href="/admin/settings" class="admin-nav-item <%= adminPage==='settings' ? 'active':'' %>">
+      <span class="ni">⚙️</span><span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+  <div class="admin-sidebar-footer">
+    <a href="/" class="admin-back-link"><span class="ni">🌐</span><span class="nav-label">Back to Site</span></a>
+    <a href="/logout" class="admin-logout-link"><span class="ni">🚪</span><span class="nav-label">Logout</span></a>
+  </div>
+</aside>
+<script>
+(function(){
+  var burger  = document.getElementById('adminBurger');
+  var sidebar = document.getElementById('adminSidebar');
+  var overlay = document.getElementById('adminOverlay');
+  function close(){ sidebar.classList.remove('mobile-open'); overlay.classList.remove('open'); burger.textContent='☰'; }
+  function open(){ sidebar.classList.add('mobile-open'); overlay.classList.add('open'); burger.textContent='✕'; }
+  burger.addEventListener('click', function(){ sidebar.classList.contains('mobile-open') ? close() : open(); });
+  overlay.addEventListener('click', close);
+  document.querySelectorAll('.admin-nav-item').forEach(function(a){ a.addEventListener('click', close); });
+})();
+</script>

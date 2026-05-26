@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include('partials/head') %></head>
+<body class="page-inner">
+
+<%- include('partials/navbar') %>
+
+<section class="notfound-section">
+  <div class="notfound-inner">
+    <img src="/logo.jpg" alt="Ninja" class="nf-ninja" />
+    <div class="nf-code">404</div>
+    <h1>Mission <span class="red-text">Failed.</span></h1>
+    <p>The ninja couldn't find this page. It may have vanished into the shadows.</p>
+    <div class="nf-actions">
+      <a href="/"      class="btn-primary">← Back to Home</a>
+      <a href="/menu"  class="btn-ghost">Browse Menu →</a>
+      <a href="/order" class="btn-ghost">Order Now →</a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
+<%- include('partials/callwidget') %>
+<script>const SHOW_LOADER = false;</script>
+<script src="/js/main.js"></script>
+</body>
+</html>

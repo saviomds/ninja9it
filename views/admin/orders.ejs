@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head') %>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title">📦 Orders</div>
+      <div class="admin-topbar-right">
+        <input class="admin-search" id="searchInput" placeholder="🔍 Search orders…" oninput="filterRows()" />
+        <% if (allOrders.length > 0) { %>
+        <form method="POST" action="/admin/orders/delete-all" id="deleteAllForm">
+          <button type="button" class="btn-admin danger sm" onclick="openConfirmModal()">🗑 Delete All</button>
+        </form>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <!-- Filters -->
+      <div class="admin-filters">
+        <a href="/admin/orders"                   class="filter-btn <%= statusFilter==='all'       ? 'active':'' %>">All (<%= allOrders.length %>)</a>
+        <a href="/admin/orders?status=pending"    class="filter-btn <%= statusFilter==='pending'   ? 'active':'' %>">⏳ Pending (<%= allOrders.filter(o=>o.status==='pending').length %>)</a>
+        <a href="/admin/orders?status=confirmed"  class="filter-btn <%= statusFilter==='confirmed' ? 'active':'' %>">✅ Confirmed (<%= allOrders.filter(o=>o.status==='confirmed').length %>)</a>
+        <a href="/admin/orders?status=delivered"  class="filter-btn <%= statusFilter==='delivered' ? 'active':'' %>">🚀 Delivered (<%= allOrders.filter(o=>o.status==='delivered').length %>)</a>
+        <a href="/admin/orders?status=cancelled"  class="filter-btn <%= statusFilter==='cancelled' ? 'active':'' %>">❌ Cancelled (<%= allOrders.filter(o=>o.status==='cancelled').length %>)</a>
+      </div>
+
+      <!-- Table -->
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="ordersTable">
+          <thead>
+            <tr>
+              <th>Ref</th><th>Customer</th><th>Address</th><th>Items</th>
+              <th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!orders.length) { %>
+            <tr><td colspan="9">
+              <div class="admin-empty"><div class="empty-icon">📭</div><p>No orders found for this filter.</p></div>
+            </td></tr>
+            <% } %>
+            <% orders.forEach(function(o) { %>
+            <tr class="order-row" data-search="<%= (o.ref+o.customer.name+o.customer.phone).toLowerCase() %>">
+              <td class="mono"><%= o.ref %></td>
+              <td>
+                <div style="font-weight:600"><%= o.customer.name %></div>
+                <div style="font-size:.75rem;color:#555"><%= o.customer.phone %></div>
+                <% if (o.user) { %><div style="font-size:.72rem;color:#444">🥷 <%= o.user.username %></div><% } %>
+              </td>
+              <td style="font-size:.78rem;color:#888;max-width:160px">
+                <%= o.customer.address %><% if (o.customer.zone) { %><br/><span style="color:#555"><%= o.customer.zone %></span><% } %>
+              </td>
+              <td>
+                <% o.items.forEach(function(item){ %>
+                <div style="font-size:.76rem;color:#888"><%= item.name %> ×<%= item.qty %></div>
+                <% }); %>
+                <% if (o.notes) { %><div style="font-size:.72rem;color:#555;margin-top:3px">📝 <%= o.notes %></div><% } %>
+              </td>
+              <td style="font-weight:700;color:#c9a227;white-space:nowrap">Rs <%= o.total %></td>
+              <td style="text-transform:capitalize;font-size:.8rem"><%= o.payment %></td>
+              <td>
+                <form method="POST" action="/admin/orders/<%= o.ref %>/status">
+                  <select name="status" class="status-select" onchange="this.form.submit()">
+                    <option value="pending"   <%= o.status==='pending'   ?'selected':'' %>>⏳ Pending</option>
+                    <option value="confirmed" <%= o.status==='confirmed' ?'selected':'' %>>✅ Confirmed</option>
+                    <option value="delivered" <%= o.status==='delivered' ?'selected':'' %>>🚀 Delivered</option>
+                    <option value="cancelled" <%= o.status==='cancelled' ?'selected':'' %>>❌ Cancelled</option>
+                  </select>
+                </form>
+              </td>
+              <td style="font-size:.74rem;white-space:nowrap;color:#666">
+                <%= new Date(o.placedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}) %>
+                <br/><%= new Date(o.placedAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) %>
+              </td>
+              <td>
+                <button type="button" class="btn-admin danger sm" title="Delete"
+                  onclick="openDeleteModal('<%= o.ref %>', '<%= o.customer.name %>', 'Rs <%= o.total %>')">🗑</button>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Delete Single Order Modal -->
+<div class="admin-modal-overlay" id="deleteModal">
+  <div class="admin-modal del-modal">
+    <div class="del-modal-icon">🗑</div>
+    <h3>Delete Order?</h3>
+    <p>
+      <span class="del-modal-ref" id="delModalRef"></span><br/>
+      <span class="del-modal-meta" id="delModalMeta"></span>
+    </p>
+    <p class="del-modal-warn">This action is permanent and cannot be undone.</p>
+    <div class="admin-modal-actions">
+      <button class="btn-admin ghost" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-admin danger" id="delModalConfirmBtn">Delete Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete All Orders Modal -->
+<div class="admin-modal-overlay" id="confirmModal">
+  <div class="admin-modal del-modal">
+    <div class="del-modal-icon">⚠️</div>
+    <h3>Delete All Orders?</h3>
+    <p>This will permanently remove all <strong><%= allOrders.length %></strong> orders.</p>
+    <p class="del-modal-warn">This action is permanent and cannot be undone.</p>
+    <div class="admin-modal-actions">
+      <button class="btn-admin ghost" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn-admin danger" onclick="document.getElementById('deleteAllForm').submit()">Delete All</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden delete form (target set dynamically) -->
+<form method="POST" id="deleteOrderForm" action="" style="display:none"></form>
+
+<script>
+function filterRows() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.order-row').forEach(row => {
+    row.style.display = row.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+
+// Delete single order modal
+function openDeleteModal(ref, name, total) {
+  document.getElementById('delModalRef').textContent  = ref;
+  document.getElementById('delModalMeta').textContent = name + ' · ' + total;
+  document.getElementById('deleteOrderForm').action   = '/admin/orders/' + ref + '/delete';
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('open'); }
+document.getElementById('delModalConfirmBtn').addEventListener('click', () => {
+  document.getElementById('deleteOrderForm').submit();
+});
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteModal();
+});
+
+// Delete all modal
+function openConfirmModal()  { document.getElementById('confirmModal').classList.add('open'); }
+function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('open'); }
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirmModal();
+});
+</script>
+</body>
+</html>
