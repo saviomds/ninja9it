@@ -14,7 +14,10 @@
       "Bash(dir \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\src\\\\app\" /s /b)",
       "Bash(findstr -i \"auth\\\\|login\\\\|sign\")",
       "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\src\\\\app\" -File | Where-Object { $_.FullName -match 'auth|login|sign' } | Select-Object -ExpandProperty FullName)",
-      "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\src\" -File | Where-Object { $_.Name -match 'supabase' } | Select-Object -ExpandProperty FullName)"
+      "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\src\" -File | Where-Object { $_.Name -match 'supabase' } | Select-Object -ExpandProperty FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Dell\\\\beoneofus\" -Depth 1 -File | Where-Object { $_.Name -match 'middleware' } | Select-Object FullName)",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Dell\\\\beoneofus\" -Depth 2 -File | Where-Object { $_.Name -match 'middleware' } | Select-Object FullName)",
+      "PowerShell(Head 20)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dell\\beoneofus\\src\\app\\api\\auth"
