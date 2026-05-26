@@ -406,8 +406,8 @@ ul{list-style:none}
 /* ══════════════════════════════════════════
    MODAL
 ══════════════════════════════════════════ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:9997;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s ease;padding:20px}
-.modal-overlay.active{opacity:1;visibility:visible}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);z-index:9997;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility .3s ease;padding:20px}
+.modal-overlay.active{opacity:1;visibility:visible;pointer-events:auto}
 .modal-box{background:var(--card);border:1px solid var(--border-r);border-radius:20px;padding:40px 32px;max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;animation:modalBounce .42s cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes modalBounce{from{transform:scale(.76);opacity:0}to{transform:scale(1);opacity:1}}
 .modal-ninja{width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid var(--red);filter:drop-shadow(0 0 18px var(--red-glow))}
@@ -482,6 +482,8 @@ footer{background:#050505;border-top:1px solid var(--border)}
   .trust-row{gap:8px}
   .call-widget{bottom:18px;right:18px}
   .drinks-grid{grid-template-columns:1fr}
+  /* prevent iOS auto-zoom on input focus (requires font-size >= 16px) */
+  .form-group input,.form-group select,.form-group textarea{font-size:16px}
 }
 
 /* ══════════════════════════════════════════
@@ -1941,9 +1943,10 @@ a.nav-user-pill:hover { opacity: .8; }
   justify-content: center;
   padding: 20px;
   opacity: 0;
+  pointer-events: none;
   transition: opacity .25s;
 }
-.pwa-card-overlay.open { opacity: 1; }
+.pwa-card-overlay.open { opacity: 1; pointer-events: auto; }
 
 .pwa-card {
   position: relative;

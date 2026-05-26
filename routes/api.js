@@ -113,14 +113,9 @@ router.post('/order/submit', (req, res) => {
     eta: '30 minutes'
   };
 
-  // Atomic save to store_order/<ref>.json
-  try {
-    fs.mkdirSync(STORE_ORDER, { recursive: true });
-    writeJSON(path.join(STORE_ORDER, `${ref}.json`), order);
-  } catch (err) {
-    console.error('[Order] Failed to save order:', err.message);
-    return res.status(500).json({ error: 'Failed to save order. Please try again.' });
-  }
+  // Atomic save to store_order/<ref>.json (no-op on read-only filesystems like Vercel)
+  try { fs.mkdirSync(STORE_ORDER, { recursive: true }); } catch {}
+  writeJSON(path.join(STORE_ORDER, `${ref}.json`), order);
 
   // Link ref to user's orders index if logged in
   if (req.session.user) {

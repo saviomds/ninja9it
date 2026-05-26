@@ -464,6 +464,7 @@ function initOrderForm() {
       }
     } catch {
       showToast('Network error. Try again.', 'error');
+      btn.innerHTML = '<span>Deploy My Order</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
       btn.disabled = false;
     }
   });
