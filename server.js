@@ -194,7 +194,12 @@ if (!IS_VERCEL) {
 }
 
 // ── START ────────────────────────────────────
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`\n🥷  Ninja9IT is live → http://localhost:${PORT}\n`)
-);
+// Export app for Vercel serverless — do not call app.listen() in that case.
+module.exports = app;
+
+if (!IS_VERCEL) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () =>
+    console.log(`\n🥷  Ninja9IT is live → http://localhost:${PORT}\n`)
+  );
+}
