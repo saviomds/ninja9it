@@ -52,22 +52,34 @@
 
   <!-- Mobile dropdown -->
   <div class="mobile-nav" id="mobileNav">
-    <a href="/"         class="<%= page==='home'     ? 'active':'' %>">Home</a>
-    <a href="/services" class="<%= page==='services' ? 'active':'' %>">Services</a>
-    <a href="/menu"     class="<%= page==='menu'     ? 'active':'' %>">Menu</a>
-    <a href="/order"    class="<%= page==='order'    ? 'active':'' %>">Order Now</a>
+    <% if (locals.currentUser) { %>
+    <div class="mobile-user-row">
+      <span class="mobile-user-avatar"><%= currentUser.isAdmin ? '👑' : (currentUser.avatar || '🥷') %></span>
+      <div class="mobile-user-info">
+        <span class="mobile-user-name"><%= currentUser.username %></span>
+        <span class="mobile-user-role"><%= currentUser.isAdmin ? 'Administrator' : 'Member' %></span>
+      </div>
+    </div>
+    <% } %>
+    <a href="/"         class="<%= page==='home'     ? 'active':'' %>">🏠 Home</a>
+    <a href="/services" class="<%= page==='services' ? 'active':'' %>">✨ Services</a>
+    <a href="/menu"     class="<%= page==='menu'     ? 'active':'' %>">🍺 Menu</a>
+    <a href="/order"    class="<%= page==='order'    ? 'active':'' %>">🛒 Order Now</a>
     <% if (locals.currentUser && !currentUser.isAdmin) { %>
     <a href="/my-orders" class="<%= page==='my-orders'||page==='track' ? 'active':'' %>">📦 My Orders</a>
     <% } %>
     <% if (locals.currentUser) { %>
     <% if (currentUser.isAdmin) { %>
+    <div class="mobile-nav-divider"></div>
     <a href="/admin">⚙️ Admin Panel</a>
     <% } %>
+    <div class="mobile-nav-divider"></div>
     <a href="/profile">👤 My Profile</a>
-    <a href="/logout" class="mobile-logout">↩ Logout (<%= currentUser.username %>)</a>
+    <a href="/logout" class="mobile-logout">↩ Logout</a>
     <% } else { %>
-    <a href="/login"    class="<%= page==='login'    ? 'active':'' %>">Login</a>
-    <a href="/register" class="<%= page==='register' ? 'active':'' %>">Register</a>
+    <div class="mobile-nav-divider"></div>
+    <a href="/login"    class="<%= page==='login'    ? 'active':'' %>">🔑 Login</a>
+    <a href="/register" class="<%= page==='register' ? 'active':'' %>">✍️ Register</a>
     <% } %>
     <a href="#" id="mobileInstallLink" class="mobile-install-link" style="display:none">📲 Install App</a>
   </div>
