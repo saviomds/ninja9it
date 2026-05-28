@@ -4,13 +4,13 @@
       "id": "admin_001",
       "username": "admin",
       "email": "admin@ninja9it.com",
-      "password": "bd7cafcc2450e37e9760e8cca9af1d1f:dc8b97af7b585c604280cc13884c58b2d59cd0c00369a6292838f747417af9f5198b257b671b59e140bf8e49428ffac0a77c2707a579bf70b8807e96d24162ea",
+      "password": "517b7c4a1db8062dd0c391a029b9f32d:02eed9f6356fee70db271f213fbc3d467b0a2519459a039f713fade70bb20c538c64c93d4bf1162eabecc9a25aec93dd5d64e7b7ba77d0a3d93851be11cb3fa4",
       "createdAt": "2026-05-20T10:28:32.700Z",
       "expiresAt": null,
       "isAdmin": true,
       "folderPath": "store_users/admin_001",
       "avatar": "👨🏽",
-      "updatedAt": "2026-05-20T15:29:52.938Z"
+      "updatedAt": "2026-05-28T10:22:44.669Z"
     }
   ]
 }
