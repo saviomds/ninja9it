@@ -26,7 +26,12 @@
       "Bash(node -e \"require\\('./server.js'\\)\")",
       "Bash(kill %1)",
       "Bash(git rm *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(del \"c:\\\\Users\\\\Dell\\\\OneDrive\\\\Desktop\\\\Ninja9it\\\\supabase_schema.sql\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\Dell\\\\beoneofus-api\\\\db\\\\data\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\Dell\\\\beoneofus-api\\\\lib\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\Dell\\\\beoneofus-api\\\\middleware\")",
+      "Bash(mkdir -p \"c:\\\\Users\\\\Dell\\\\beoneofus-api\\\\routes\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dell\\beoneofus\\src\\app\\api\\auth"
