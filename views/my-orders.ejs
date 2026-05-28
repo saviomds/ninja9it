@@ -95,7 +95,7 @@
             <%= active ? '📍 Track Live →' : '👁 View Details →' %>
           </a>
           <% if (active) { %>
-          <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>?text=Hi%20Ninja9IT!%20I%27m%20tracking%20order%20<%= o.ref %>.%20Can%20you%20update%20me%20please%3F"
+          <a href="https://wa.me/<%= (settings.whatsapp||settings.phoneRaw||'2300000000').replace(/\D/g,'') %>?text=Hi%20Ninja9IT!%20I%27m%20tracking%20order%20<%= o.ref %>.%20Can%20you%20update%20me%20please%3F"
              target="_blank" class="mo-wa-btn" title="WhatsApp about this order">💬</a>
           <% } %>
         </div>
@@ -121,7 +121,7 @@
       </div>
       <div class="mocs-actions">
         <a href="tel:+<%= settings.phoneRaw || '2300000000' %>" class="mocs-btn mocs-btn--call">📞 Call Us</a>
-        <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>?text=Hi%20Ninja9IT!%20I%27d%20like%20an%20update%20on%20my%20order%20please."
+        <a href="https://wa.me/<%= (settings.whatsapp||settings.phoneRaw||'2300000000').replace(/\D/g,'') %>?text=Hi%20Ninja9IT!%20I%27d%20like%20an%20update%20on%20my%20order%20please."
            target="_blank" class="mocs-btn mocs-btn--wa">💬 WhatsApp</a>
       </div>
     </div>

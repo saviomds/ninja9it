@@ -61,7 +61,8 @@
         <div class="avatar-picker-wrap" style="margin-bottom:20px">
           <label class="avatar-picker-label">Choose avatar</label>
           <div class="avatar-grid">
-            <% const avatars = ['🥷','👤','🧑🏻','🧑🏽','🧑🏾','🧑🏿','👨🏻','👨🏽','👨🏾','👨🏿','👩🏻','👩🏽','👩🏾','👩🏿','🧔🏽','👱🏻']; %>
+            <% const avatars = ['🥷','😎','🦊','🐱','🐉','🦁','🐺','🐸','🤖','👾','🦅','🐯',
+            '🧑🏻','🧑🏽','🧑🏾','🧑🏿','👨🏻','👨🏽','👨🏾','👨🏿','👩🏻','👩🏽','👩🏾','👩🏿']; %>
             <% avatars.forEach(function(av){ %>
             <button type="button" class="av-opt <%= av === (user.avatar||'🥷') ? 'av-opt--selected' : '' %>" data-av="<%= av %>"><%= av %></button>
             <% }); %>
@@ -96,15 +97,27 @@
         <form method="POST" action="/profile/password" class="profile-form">
           <div class="auth-group">
             <label>Current Password</label>
-            <input type="password" name="currentPassword" placeholder="Enter current password" required />
+            <div class="pw-wrap">
+              <input type="password" name="currentPassword" placeholder="Enter current password"
+                required autocomplete="current-password" />
+              <button type="button" class="pw-toggle" aria-label="Show password" tabindex="-1">👁</button>
+            </div>
           </div>
           <div class="auth-group" style="margin-top:14px">
             <label>New Password</label>
-            <input type="password" name="newPassword" placeholder="Min. 6 characters" required />
+            <div class="pw-wrap">
+              <input type="password" name="newPassword" placeholder="Min. 6 characters"
+                required autocomplete="new-password" minlength="6" />
+              <button type="button" class="pw-toggle" aria-label="Show password" tabindex="-1">👁</button>
+            </div>
           </div>
           <div class="auth-group" style="margin-top:14px">
             <label>Confirm New Password</label>
-            <input type="password" name="confirmPassword" placeholder="Repeat new password" required />
+            <div class="pw-wrap">
+              <input type="password" name="confirmPassword" placeholder="Repeat new password"
+                required autocomplete="new-password" />
+              <button type="button" class="pw-toggle" aria-label="Show password" tabindex="-1">👁</button>
+            </div>
           </div>
           <button type="submit" class="auth-btn" style="margin-top:20px;background:#1d4ed8">
             <span>Update Password</span>

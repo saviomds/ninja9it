@@ -38,7 +38,7 @@
       <div class="social-list">
         <a href="#" class="soc-link">📘 Facebook</a>
         <a href="#" class="soc-link">📸 Instagram</a>
-        <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>" class="soc-link wa-link">💬 WhatsApp Us</a>
+        <a href="https://wa.me/<%= (settings.whatsapp||settings.phoneRaw||'2300000000').replace(/\D/g,'') %>" class="soc-link wa-link">💬 WhatsApp Us</a>
       </div>
     </div>
   </div>

@@ -167,7 +167,7 @@
             <small><%= settings.phone || '+230 5XXX XXXX' %></small>
           </div>
         </a>
-        <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>?text=Hi%20Ninja9IT!%20I%27m%20tracking%20order%20<%= order.ref %>.%20Can%20you%20give%20me%20an%20update%20please%3F"
+        <a href="https://wa.me/<%= (settings.whatsapp||settings.phoneRaw||'2300000000').replace(/\D/g,'') %>?text=Hi%20Ninja9IT!%20I%27m%20tracking%20order%20<%= order.ref %>.%20Can%20you%20give%20me%20an%20update%20please%3F"
            target="_blank" class="tcc-btn tcc-btn--wa">
           <span>💬</span>
           <div>

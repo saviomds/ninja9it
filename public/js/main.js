@@ -472,8 +472,10 @@ function initOrderForm() {
 
 // ── ORDER MODAL ───────────────────────────
 function closeOrderModal() {
-  document.getElementById('orderSuccessModal').classList.remove('active');
-  setTimeout(() => location.href = '/', 200);
+  const m = document.getElementById('orderSuccessModal');
+  if (m) m.classList.remove('active');
+  const loggedIn = !!document.querySelector('.nav-user-pill');
+  setTimeout(() => location.href = loggedIn ? '/my-orders' : '/', 200);
 }
 
 document.getElementById('orderSuccessModal')?.addEventListener('click', function (e) {
@@ -515,9 +517,102 @@ document.getElementById('orderSuccessModal')?.addEventListener('click', function
 function initReveal() {
   const els = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-  }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
-  els.forEach((el, i) => { el.style.transitionDelay = `${(i % 5) * 0.07}s`; obs.observe(el); });
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+  // reset per-parent index so delay resets each section
+  const parentMap = new Map();
+  els.forEach(el => {
+    const p = el.parentElement;
+    const idx = (parentMap.get(p) || 0);
+    parentMap.set(p, idx + 1);
+    el.style.transitionDelay = `${Math.min(idx, 4) * 0.07}s`;
+    obs.observe(el);
+  });
+}
+
+// ── PASSWORD TOGGLE ───────────────────────
+function initPasswordToggle() {
+  document.querySelectorAll('.pw-toggle').forEach(btn => {
+    const input = btn.previousElementSibling;
+    if (!input || input.type !== 'password' && input.type !== 'text') return;
+    btn.addEventListener('click', () => {
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.textContent = show ? '🙈' : '👁';
+    });
+  });
+}
+
+// ── PASSWORD STRENGTH ─────────────────────
+function initPasswordStrength() {
+  const input = document.getElementById('regPassword');
+  const fill  = document.getElementById('pwStrengthFill');
+  const label = document.getElementById('pwStrengthLabel');
+  if (!input || !fill) return;
+
+  input.addEventListener('input', () => {
+    const v = input.value;
+    let score = 0;
+    if (v.length >= 6)  score++;
+    if (v.length >= 10) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+
+    const levels = [
+      { pct:'20%', color:'#e63946', text:'Too weak' },
+      { pct:'40%', color:'#f4a261', text:'Weak' },
+      { pct:'60%', color:'#e9c46a', text:'Fair' },
+      { pct:'80%', color:'#57cc99', text:'Good' },
+      { pct:'100%',color:'#38b000', text:'Strong' },
+    ];
+    const s = score < 1 ? 0 : score - 1;
+    fill.style.width = v.length ? levels[s].pct : '0';
+    fill.style.background = levels[s].color;
+    if (label) label.textContent = v.length ? levels[s].text : '';
+  });
+}
+
+// ── PASSWORD MATCH ────────────────────────
+function initPasswordMatch() {
+  const pw  = document.getElementById('regPassword');
+  const con = document.getElementById('regConfirm');
+  const hint = document.getElementById('pwMatchHint');
+  if (!pw || !con || !hint) return;
+
+  function check() {
+    if (!con.value) { hint.textContent = ''; return; }
+    const ok = pw.value === con.value;
+    hint.textContent = ok ? '✓ Passwords match' : '✕ Passwords do not match';
+    hint.style.color = ok ? '#57cc99' : '#e63946';
+    con.setCustomValidity(ok ? '' : 'Passwords do not match');
+  }
+  pw.addEventListener('input', check);
+  con.addEventListener('input', check);
+}
+
+// ── AUTH FORM LOADING STATE ───────────────
+function initAuthForms() {
+  [
+    { form: 'loginForm',    btn: 'loginBtn',    text: 'Entering…' },
+    { form: 'loginForm',    btn: 'loginBtn',    text: 'Entering…' },
+  ];
+
+  document.querySelectorAll('.auth-form').forEach(form => {
+    form.addEventListener('submit', function () {
+      const btn = this.querySelector('button[type="submit"]');
+      if (!btn || btn.disabled) return;
+      btn.disabled = true;
+      const span = btn.querySelector('span');
+      if (span) span.textContent = 'Loading…';
+      btn.style.opacity = '0.7';
+    });
+  });
 }
 
 // ── SMOOTH SCROLLING ──────────────────────
@@ -532,11 +627,14 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 // ── INIT ──────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // If no loader, start reveal immediately
   if (typeof SHOW_LOADER === 'undefined' || !SHOW_LOADER) initReveal();
 
   initAddToCart();
   initQtyControls();
   initCartPage();
   initOrderForm();
+  initPasswordToggle();
+  initPasswordStrength();
+  initPasswordMatch();
+  initAuthForms();
 });

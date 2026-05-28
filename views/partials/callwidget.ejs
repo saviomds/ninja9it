@@ -60,7 +60,7 @@
           <small><%= settings.phone || '+230 5XXX XXXX' %></small>
         </div>
       </a>
-      <a href="https://wa.me/<%= settings.whatsapp || '2300000000' %>" target="_blank" class="call-opt">
+      <a href="https://wa.me/<%= (settings.whatsapp||settings.phoneRaw||'2300000000').replace(/\D/g,'') %>" target="_blank" class="call-opt">
         <div class="call-opt-icon wa-icon">💬</div>
         <div>
           <strong>WhatsApp Order</strong>

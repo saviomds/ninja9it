@@ -72,7 +72,8 @@ router.post('/register', authLimiter, (req, res) => {
   if (db.findUserByUsername(username)) return fail('That username is already taken.');
   if (db.findUserByEmail(email))       return fail('An account with that email already exists.');
 
-  const VALID_AVATARS = ['🥷','😎','🦊','🐱','🐉','🦁','🐺','🐸','🤖','👾','🦅','🐯'];
+  const VALID_AVATARS = ['🥷','😎','🦊','🐱','🐉','🦁','🐺','🐸','🤖','👾','🦅','🐯',
+    '🧑🏻','🧑🏽','🧑🏾','🧑🏿','👨🏻','👨🏽','👨🏾','👨🏿','👩🏻','👩🏽','👩🏾','👩🏿'];
   const chosenAvatar = VALID_AVATARS.includes(avatar) ? avatar : '🥷';
 
   const newUser = {
