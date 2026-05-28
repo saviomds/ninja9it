@@ -3,6 +3,7 @@ require('dotenv').config();
 const express       = require('express');
 const session       = require('express-session');
 const compression   = require('compression');
+const RedisStore    = require('connect-redis').default; // Import RedisStore
 const path          = require('path');
 const fs            = require('fs');
 const crypto        = require('crypto');
@@ -44,16 +45,29 @@ const sessionConfig = {
   },
 };
 
-if (!IS_VERCEL) {
+if (IS_VERCEL) {
+  // Use RedisStore for Vercel deployments
+  // You'll need to provision a Redis instance (e.g., Upstash, Redis Labs)
+  // and set REDIS_URL in your Vercel environment variables.
+  const redisClient = require('redis').createClient({
+    url: process.env.REDIS_URL,
+  });
+  redisClient.connect().catch(console.error);
+
+  sessionConfig.store = new RedisStore({
+    client: redisClient,
+    prefix: 'n9it_sess:',
+  });
+} else {
+  // Use FileStore for local development
   const FileStore = require('session-file-store')(session);
   sessionConfig.store = new FileStore({
-    path:         path.join(__dirname, 'data/sessions'),
-    ttl:          86400,
+    path: path.join(__dirname, 'data/sessions'),
+    ttl: 86400,
     reapInterval: 3600,
-    logFn:        () => {},
+    logFn: () => {},
   });
 }
-
 app.use(session(sessionConfig));
 
 // ── ATTACH CART + USER + SETTINGS TO EVERY RESPONSE ────
