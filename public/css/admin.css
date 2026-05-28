@@ -147,7 +147,7 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
 .btn-admin{
   display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:9px;
   font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:all .18s;
-  text-decoration:none;font-family:inherit;white-space:nowrap;
+  text-decoration:none;font-family:inherit;white-space:nowrap;touch-action:manipulation;
 }
 .btn-admin.primary{background:var(--ar);color:#fff}
 .btn-admin.primary:hover{background:#ff4a57;transform:translateY(-1px);box-shadow:0 6px 18px rgba(230,57,70,.35)}
@@ -164,7 +164,7 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
 .admin-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .filter-btn{
   padding:5px 14px;border-radius:50px;font-size:.76rem;font-weight:600;
-  cursor:pointer;border:1px solid var(--ab);background:transparent;color:var(--amu);
+  cursor:pointer;border:1px solid var(--ab);background:transparent;color:var(--amu);touch-action:manipulation;
   transition:all .18s;text-decoration:none;display:inline-block;
 }
 .filter-btn:hover,.filter-btn.active{
@@ -212,7 +212,7 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
 .aform-group textarea{
   background:rgba(255,255,255,.04);border:1px solid var(--ab);border-radius:8px;
   padding:10px 13px;color:#fff;font-size:.88rem;font-family:inherit;
-  transition:border-color .18s,box-shadow .18s;
+  transition:border-color .18s,box-shadow .18s;touch-action:manipulation;
 }
 .aform-group input:focus,
 .aform-group select:focus,
@@ -243,7 +243,7 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
 .admin-search{
   background:rgba(255,255,255,.05);border:1px solid var(--ab);border-radius:8px;
   padding:7px 13px;color:#fff;font-size:.83rem;font-family:inherit;
-  width:220px;transition:border-color .18s;
+  width:220px;transition:border-color .18s;touch-action:manipulation;
 }
 .admin-search:focus{outline:none;border-color:var(--ar)}
 .admin-search::placeholder{color:rgba(255,255,255,.2)}
@@ -267,7 +267,7 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
   display:flex;align-items:center;justify-content:center;z-index:999;
   opacity:0;pointer-events:none;transition:opacity .2s;
 }
-.admin-modal-overlay.open{opacity:1;pointer-events:all}
+.admin-modal-overlay.open{opacity:1;pointer-events:auto}
 .admin-modal{
   background:#1a1a1a;border:1px solid var(--ab);border-radius:15px;padding:30px;
   max-width:400px;width:90%;transform:scale(.94);transition:transform .2s;
@@ -373,6 +373,12 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
   .admin-table td:nth-child(7){display:none}
   .admin-section-header{flex-direction:column;align-items:flex-start}
   .admin-modal{padding:20px}
+  /* prevent iOS auto-zoom on inputs */
+  .aform-group input,
+  .aform-group select,
+  .aform-group textarea,
+  .admin-search,
+  .settings-group input{font-size:16px !important}
 }
 @media(max-width:400px){
   .admin-stats{grid-template-columns:1fr}
@@ -438,7 +444,7 @@ body.admin-body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;min
 .settings-group input{
   background:#0f0f0f;border:1px solid rgba(255,255,255,.1);
   border-radius:8px;padding:9px 13px;color:#fff;font-size:.88rem;
-  transition:border-color .18s;width:100%;
+  transition:border-color .18s;width:100%;touch-action:manipulation;
 }
 .settings-group input:focus{outline:none;border-color:rgba(230,57,70,.5)}
 .settings-hint{font-size:.7rem;color:rgba(255,255,255,.25);margin-top:2px}
