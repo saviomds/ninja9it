@@ -47,7 +47,7 @@ router.post('/login', authLimiter, (req, res) => {
     isAdmin:  user.isAdmin,
     avatar:   user.avatar || '🥷',
   };
-  req.session.save(() => res.redirect('/'));
+  res.redirect('/');
 });
 
 // ── GET /register ────────────────────────────
@@ -95,12 +95,13 @@ router.post('/register', authLimiter, (req, res) => {
     isAdmin:  false,
     avatar:   newUser.avatar,
   };
-  req.session.save(() => res.redirect('/'));
+  res.redirect('/');
 });
 
 // ── GET /logout ──────────────────────────────
 router.get('/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/'));
+  req.session = null;
+  res.redirect('/');
 });
 
 module.exports = router;

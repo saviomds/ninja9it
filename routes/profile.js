@@ -59,7 +59,7 @@ router.post('/profile/update', requireLogin, (req, res) => {
   db.updateUser(user.id, { username, email: email.toLowerCase(), avatar: safeAvatar });
 
   req.session.user = { ...req.session.user, username, avatar: safeAvatar };
-  req.session.save(() => res.redirect('/profile?saved=1'));
+  res.redirect('/profile?saved=1');
 });
 
 // ── POST /profile/password ───────────────────
@@ -76,7 +76,7 @@ router.post('/profile/password', requireLogin, (req, res) => {
   if (!verifyPassword(currentPassword, user.password))      return fail('Current password is incorrect.');
 
   db.updateUser(user.id, { password: hashPassword(newPassword) });
-  req.session.save(() => res.redirect('/profile?saved=1'));
+  res.redirect('/profile?saved=1');
 });
 
 module.exports = router;

@@ -2,7 +2,6 @@
 require('dotenv').config();
 
 const express     = require('express');
-const session     = require('express-session');
 const compression = require('compression');
 const path        = require('path');
 const fs          = require('fs');
@@ -28,29 +27,15 @@ app.use(express.json({ limit: '50kb' }));
 app.use(sanitizeBody);
 app.use(express.static(path.join(__dirname, 'public'), { index: false, etag: true }));
 
-// ── Sessions ──────────────────────────────────
-const FileStore    = require('session-file-store')(session);
-const SESSION_DIR  = IS_VERCEL
-  ? '/tmp/n9it-sessions'
-  : path.join(__dirname, 'db/sessions');
-
-app.use(session({
-  secret:            process.env.SESSION_SECRET || 'ninja9it-shadow-key-2025',
-  resave:            false,
-  saveUninitialized: false,
-  name:              'n9it.sid',
-  store: new FileStore({
-    path:        SESSION_DIR,
-    ttl:         86400,
-    reapInterval: 3600,
-    logFn:       () => {},
-  }),
-  cookie: {
-    maxAge:   86400000,
-    httpOnly: true,
-    sameSite: 'lax',
-    secure:   IS_VERCEL,
-  },
+// ── Sessions (cookie-based — works on Vercel serverless) ──
+const cookieSession = require('cookie-session');
+app.use(cookieSession({
+  name:   'n9it.sid',
+  secret: process.env.SESSION_SECRET || 'ninja9it-shadow-key-2025',
+  maxAge: 86400000,
+  httpOnly: true,
+  sameSite: 'lax',
+  secure: IS_VERCEL,
 }));
 
 // ── Inject globals into every response ────────
