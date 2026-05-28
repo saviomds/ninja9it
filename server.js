@@ -38,7 +38,7 @@ const sessionConfig = {
   saveUninitialized: false,
   name:              'n9it.sid',
   store: new FileStore({
-    path: path.join(__dirname, 'data/sessions'),
+    path: IS_VERCEL ? '/tmp/sessions' : path.join(__dirname, 'data/sessions'),
     ttl: 86400,
     reapInterval: 3600,
     logFn: () => {},
@@ -187,9 +187,11 @@ const STORE_DIR  = path.join(__dirname, 'store_users');
     }
   }
 
-seedAdmin();
-cleanupExpiredUsers();
-setInterval(cleanupExpiredUsers, 60 * 60 * 1000);
+if (!IS_VERCEL) {
+  seedAdmin();
+  cleanupExpiredUsers();
+  setInterval(cleanupExpiredUsers, 60 * 60 * 1000);
+}
 
 // ── START ────────────────────────────────────
 const PORT = process.env.PORT || 3000;
