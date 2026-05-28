@@ -1,9 +1,8 @@
 require('dotenv').config();
 
 const express       = require('express');
-const session       = require('express-session');
+const session       = require('express-session'); // Corrected import
 const compression   = require('compression');
-const RedisStore    = require('connect-redis').default; // Import RedisStore
 const path          = require('path');
 const fs            = require('fs');
 const crypto        = require('crypto');
@@ -31,12 +30,19 @@ app.use(express.static(path.join(__dirname, 'public'), {
   etag:  true,
 }));
 
-// ── SESSION ──────────────────────────────────
+// ── SESSION (JSON File-based Storage) ────────
+const FileStore = require('session-file-store')(session);
 const sessionConfig = {
   secret:            process.env.SESSION_SECRET || 'ninja9it-fallback-secret',
   resave:            false,
   saveUninitialized: false,
   name:              'n9it.sid',
+  store: new FileStore({
+    path: path.join(__dirname, 'data/sessions'),
+    ttl: 86400,
+    reapInterval: 3600,
+    logFn: () => {},
+  }),
   cookie: {
     maxAge:   86400000,
     httpOnly: true,
@@ -44,30 +50,6 @@ const sessionConfig = {
     secure:   IS_VERCEL,
   },
 };
-
-if (IS_VERCEL) {
-  // Use RedisStore for Vercel deployments
-  // You'll need to provision a Redis instance (e.g., Upstash, Redis Labs)
-  // and set REDIS_URL in your Vercel environment variables.
-  const redisClient = require('redis').createClient({
-    url: process.env.REDIS_URL,
-  });
-  redisClient.connect().catch(console.error);
-
-  sessionConfig.store = new RedisStore({
-    client: redisClient,
-    prefix: 'n9it_sess:',
-  });
-} else {
-  // Use FileStore for local development
-  const FileStore = require('session-file-store')(session);
-  sessionConfig.store = new FileStore({
-    path: path.join(__dirname, 'data/sessions'),
-    ttl: 86400,
-    reapInterval: 3600,
-    logFn: () => {},
-  });
-}
 app.use(session(sessionConfig));
 
 // ── ATTACH CART + USER + SETTINGS TO EVERY RESPONSE ────
@@ -162,48 +144,48 @@ app.use((err, req, res, next) => {
 const USERS_FILE = path.join(__dirname, 'data/users.json');
 const STORE_DIR  = path.join(__dirname, 'store_users');
 
-function seedAdmin() {
-  const db = readUsers(USERS_FILE);
-  if (db.users.some(u => u.isAdmin)) return;
+  function seedAdmin() {
+    const db = readUsers(USERS_FILE);
+    if (db.users.some(u => u.isAdmin)) return;
 
-  const { hashPassword } = require('./utils/crypto');
-  const adminPass = process.env.ADMIN_PASS || 'Ninja9IT@admin';
-  const adminId   = 'admin_001';
+    const { hashPassword } = require('./utils/crypto');
+    const adminPass = process.env.ADMIN_PASS || 'Ninja9IT@admin';
+    const adminId   = 'admin_001';
 
-  db.users.unshift({
-    id:         adminId,
-    username:   process.env.ADMIN_USERNAME || 'admin',
-    email:      process.env.ADMIN_EMAIL    || 'admin@ninja9it.com',
-    password:   hashPassword(adminPass),
-    createdAt:  new Date().toISOString(),
-    expiresAt:  null,
-    isAdmin:    true,
-    folderPath: `store_users/${adminId}`,
-  });
+    db.users.unshift({
+      id:         adminId,
+      username:   process.env.ADMIN_USERNAME || 'admin',
+      email:      process.env.ADMIN_EMAIL    || 'admin@ninja9it.com',
+      password:   hashPassword(adminPass),
+      createdAt:  new Date().toISOString(),
+      expiresAt:  null,
+      isAdmin:    true,
+      folderPath: `store_users/${adminId}`,
+    });
 
-  writeUsers(USERS_FILE, db);
-  fs.mkdirSync(path.join(STORE_DIR, adminId), { recursive: true });
-  console.log('\n👑  Admin seeded — username: admin\n');
-}
-
-function cleanupExpiredUsers() {
-  try {
-    const db     = readUsers(USERS_FILE);
-    const before = db.users.length;
-    const now    = new Date();
-
-    db.users = db.users.filter(u =>
-      u.isAdmin || !u.expiresAt || new Date(u.expiresAt) > now
-    );
-
-    if (db.users.length < before) {
-      writeUsers(USERS_FILE, db);
-      console.log(`[Auth] Removed ${before - db.users.length} expired user(s).`);
-    }
-  } catch (err) {
-    console.error('[Auth] Cleanup error:', err.message);
+    writeUsers(USERS_FILE, db);
+    fs.mkdirSync(path.join(STORE_DIR, adminId), { recursive: true });
+    console.log('\n👑  Admin seeded — username: admin\n');
   }
-}
+
+  function cleanupExpiredUsers() {
+    try {
+      const db     = readUsers(USERS_FILE);
+      const before = db.users.length;
+      const now    = new Date();
+
+      db.users = db.users.filter(u =>
+        u.isAdmin || !u.expiresAt || new Date(u.expiresAt) > now
+      );
+
+      if (db.users.length < before) {
+        writeUsers(USERS_FILE, db);
+        console.log(`[Auth] Removed ${before - db.users.length} expired user(s).`);
+      }
+    } catch (err) {
+      console.error('[Auth] Cleanup error:', err.message);
+    }
+  }
 
 seedAdmin();
 cleanupExpiredUsers();
