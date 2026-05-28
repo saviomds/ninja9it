@@ -122,214 +122,33 @@
 })();
 
 
-// ── MENU DATA ─────────────────────────────
-const MENU = {
-  beers: [
-    {
-      name: 'Phoenix Beer',
-      price: 'Rs 85',
-      tag: '🇲🇺 Local Legend',
-      desc: "Mauritius' golden lager — the island's pride since 1963."
-    },
-    {
-      name: 'Blue Marlin',
-      price: 'Rs 95',
-      tag: '🇲🇺 Local',
-      desc: 'Crisp Mauritian craft lager with a tropical finish.'
-    },
-    {
-      name: 'Stella Artois',
-      price: 'Rs 120',
-      tag: 'Premium',
-      desc: 'Belgian pilsner. Smooth, balanced, timeless.'
-    },
-    {
-      name: 'Heineken',
-      price: 'Rs 115',
-      tag: 'Import',
-      desc: 'Dutch premium lager. A world favourite.'
-    },
-    {
-      name: 'Corona Extra',
-      price: 'Rs 130',
-      tag: 'Import',
-      desc: 'Mexican pale lager — best with a wedge of lime.'
-    },
-    {
-      name: 'Guinness',
-      price: 'Rs 145',
-      tag: 'Dark Stout',
-      desc: 'Irish dry stout with rich roasted depth.'
-    },
-  ],
-  spirits: [
-    {
-      name: 'Green Island Rum',
-      price: 'Rs 450',
-      tag: '🇲🇺 Local',
-      desc: 'Smooth Mauritian white rum — legendary on the island.'
-    },
-    {
-      name: 'Chamarel Rum',
-      price: 'Rs 780',
-      tag: '🇲🇺 Premium',
-      desc: 'Award-winning aged rum from the hills of Chamarel, Mauritius.'
-    },
-    {
-      name: "Grey Goose Vodka",
-      price: 'Rs 1,450',
-      tag: 'Vodka',
-      desc: 'French ultra-premium vodka. Pure, smooth, refined.'
-    },
-    {
-      name: "Jameson",
-      price: 'Rs 1,100',
-      tag: 'Irish Whiskey',
-      desc: 'Triple-distilled Irish whiskey. Smooth and versatile.'
-    },
-    {
-      name: 'Chivas Regal 12',
-      price: 'Rs 1,800',
-      tag: 'Scotch',
-      desc: 'Blended Scotch whisky aged 12 years. Rich and warm.'
-    },
-    {
-      name: 'Moët & Chandon',
-      price: 'Rs 3,500',
-      tag: 'Champagne',
-      desc: 'French Brut Impérial. Pure celebration in a bottle.'
-    },
-  ],
-  wines: [
-    {
-      name: 'Malbec Reserve',
-      price: 'Rs 850',
-      tag: 'Red Wine',
-      desc: 'Argentinian full-bodied red with dark fruit and velvet tannins.'
-    },
-    {
-      name: 'Sauvignon Blanc',
-      price: 'Rs 780',
-      tag: 'White Wine',
-      desc: 'New Zealand crisp white — citrus, elderflower, gooseberry.'
-    },
-    {
-      name: 'Rosé Provençal',
-      price: 'Rs 950',
-      tag: 'Rosé',
-      desc: 'Classic French rosé. Elegant, dry, refreshing.'
-    },
-    {
-      name: 'Prosecco DOC',
-      price: 'Rs 1,100',
-      tag: 'Sparkling',
-      desc: 'Italian sparkling wine — vibrant bubbles and light fruit.'
-    },
-    {
-      name: 'Shiraz Classic',
-      price: 'Rs 720',
-      tag: 'Red Wine',
-      desc: 'Bold Australian Shiraz. Spiced plum with a smoky finish.'
-    },
-    {
-      name: 'Pinot Grigio',
-      price: 'Rs 810',
-      tag: 'White Wine',
-      desc: 'Italian dry white — crisp, clean and food-friendly.'
-    },
-  ],
-  cocktails: [
-    {
-      name: 'Ninja Shadow',
-      price: 'Rs 280',
-      tag: '★ Signature',
-      desc: 'Black vodka, elderflower liqueur, fresh lime, activated charcoal. Bold and dark.'
-    },
-    {
-      name: 'Isle Punch',
-      price: 'Rs 250',
-      tag: '🇲🇺 MU Special',
-      desc: 'Local rum, tropical fruits, island spices. Pure Mauritius in a glass.'
-    },
-    {
-      name: 'Dark Striker',
-      price: 'Rs 290',
-      tag: '★ Signature',
-      desc: 'Dark rum, ginger beer, aromatic bitters, orange twist.'
-    },
-    {
-      name: 'Mango Katana',
-      price: 'Rs 240',
-      tag: 'Tropical',
-      desc: 'Mango rum, passion fruit, fresh mint, soda water.'
-    },
-    {
-      name: 'Blue Lagoon MU',
-      price: 'Rs 260',
-      tag: '🇲🇺 MU Special',
-      desc: 'Vodka, blue curaçao, lemon juice — inspired by our Indian Ocean.'
-    },
-    {
-      name: 'Cane Warrior',
-      price: 'Rs 270',
-      tag: '★ Signature',
-      desc: 'Mauritian rum, fresh cane sugar, lime, Angostura bitters.'
-    },
-  ],
-  softs: [
-    {
-      name: 'Eski Cola',
-      price: 'Rs 45',
-      tag: '🇲🇺 Local',
-      desc: "Mauritius' own cola. Refreshing and nostalgic."
-    },
-    {
-      name: 'Tropical Juice Mix',
-      price: 'Rs 65',
-      tag: 'Fresh',
-      desc: 'Mango, passion fruit & guava blend. 100% island flavour.'
-    },
-    {
-      name: 'Perrier Sparkling',
-      price: 'Rs 85',
-      tag: 'Premium',
-      desc: 'French sparkling mineral water — refined fizz.'
-    },
-    {
-      name: 'Red Bull',
-      price: 'Rs 95',
-      tag: 'Energy',
-      desc: 'The classic energy drink. Wings guaranteed.'
-    },
-    {
-      name: 'Lemon Squash',
-      price: 'Rs 55',
-      tag: 'Refresh',
-      desc: 'Fresh-squeezed lemon with sparkling water.'
-    },
-    {
-      name: 'Virgin Mojito',
-      price: 'Rs 120',
-      tag: 'Mocktail',
-      desc: 'Fresh mint, lime, cane sugar, sparkling water. Zero alcohol, full flavour.'
-    },
-  ],
-};
-
-
 // ── MENU RENDERER ─────────────────────────
 (function initMenu() {
   const grid = document.getElementById('menuGrid');
   const tabs = document.querySelectorAll('.tab-btn');
+  let MENU = null;
+
+  async function fetchMenu() {
+    try {
+      // Classic access: fetching data from your local server endpoint
+      const res = await fetch('/api/drinks');
+      const data = await res.json();
+      MENU = data.items;
+      render('beers');
+    } catch (e) {
+      console.error("Failed to access local data:", e);
+    }
+  }
 
   function render(tabKey) {
+    if (!MENU || !MENU[tabKey]) return;
     grid.classList.add('fading');
     setTimeout(() => {
       grid.innerHTML = MENU[tabKey].map((item, i) => `
         <div class="menu-card" style="animation-delay:${i * 0.055}s">
           <div class="card-top">
             <span class="card-name">${item.name}</span>
-            <span class="card-price">${item.price}</span>
+            <span class="card-price">Rs ${item.price}</span>
           </div>
           <span class="card-tag">${item.tag}</span>
           <p class="card-desc">${item.desc}</p>
@@ -350,7 +169,7 @@ const MENU = {
     });
   });
 
-  render('beers');
+  fetchMenu();
 })();
 
 

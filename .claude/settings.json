@@ -21,7 +21,8 @@
       "Bash(dir \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\src\" /b)",
       "Bash(powershell -Command \"Select-String -Path 'c:\\\\Users\\\\Dell\\\\beoneofus\\\\.next\\\\server\\\\chunks\\\\[root-of-the-server]__0kbz0qv._.js' -Pattern 'proxy|middleware|PROTECTED_PAGES' | Select-Object -First 5\")",
       "Read(//c/Users/Dell/beoneofus/.next/server/chunks/**)",
-      "PowerShell($content = Get-Content \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\.next\\\\server\\\\chunks\\\\[root-of-the-server]__0kbz0qv._.js\" -Raw; $idx = $content.IndexOf\\(\"proxy\"\\); $content.Substring\\([Math]::Max\\(0,$idx-50\\), [Math]::Min\\(400, $content.Length-$idx\\)\\))"
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\Dell\\\\beoneofus\\\\.next\\\\server\\\\chunks\\\\[root-of-the-server]__0kbz0qv._.js\" -Raw; $idx = $content.IndexOf\\(\"proxy\"\\); $content.Substring\\([Math]::Max\\(0,$idx-50\\), [Math]::Min\\(400, $content.Length-$idx\\)\\))",
+      "Bash(findstr /R /C:\"\\\\.from\\('.*'\\)\\\\|\\\\.from\\(\\\\\".*\\\\\"\\)\" *.js *.ts *.tsx /s)"
     ],
     "additionalDirectories": [
       "C:\\Users\\Dell\\beoneofus\\src\\app\\api\\auth"
