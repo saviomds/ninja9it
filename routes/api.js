@@ -1,18 +1,22 @@
+'use strict';
 const express = require('express');
 const router  = express.Router();
-const fs      = require('fs');
-const path    = require('path');
-const { items } = require('../data/drinks');
-const { writeJSON, readJSON } = require('../utils/db');
+const db      = require('../lib/db');
+const { genRef } = require('../lib/crypto');
+const catalog = require('../data/drinks');
 
-const STORE_ORDER = path.join(__dirname, '../store_order');
+// ── Cart helpers ─────────────────────────────
 
-function findDrink(id) {
-  for (const list of Object.values(items)) {
-    const d = list.find(x => x.id === id);
-    if (d) return d;
-  }
-  return null;
+function findItem(id) {
+  const { items, products } = mergedMenu();
+  return items.find(x => x.id === id) || products.find(x => x.id === id) || null;
+}
+
+function mergedMenu() {
+  const { items: builtIn } = catalog;
+  const { items: custom, hidden } = db.getProducts();
+  const allBuiltIn = Object.values(builtIn).flat().filter(d => !hidden.includes(d.id));
+  return { items: allBuiltIn, products: custom };
 }
 
 function cartSummary(cart) {
@@ -22,119 +26,101 @@ function cartSummary(cart) {
   };
 }
 
-// Add to cart
+// ── POST /api/cart/add ───────────────────────
 router.post('/cart/add', (req, res) => {
   const { id, qty = 1 } = req.body;
-  const drink = findDrink(id);
-  if (!drink) return res.status(404).json({ error: 'Drink not found' });
+  const item = findItem(id);
+  if (!item) return res.status(404).json({ error: 'Item not found.' });
 
-  const cart     = req.session.cart;
+  const cart     = req.session.cart || [];
   const existing = cart.find(i => i.id === id);
 
   if (existing) {
-    existing.qty += parseInt(qty);
+    existing.qty += Math.max(1, parseInt(qty) || 1);
   } else {
     cart.push({
-      id: drink.id, name: drink.name, price: drink.price,
-      emoji: drink.emoji, gradient: drink.gradient, qty: parseInt(qty)
+      id:       item.id,
+      name:     item.name,
+      price:    item.price,
+      emoji:    item.emoji,
+      gradient: item.gradient,
+      qty:      Math.max(1, parseInt(qty) || 1),
     });
   }
 
+  req.session.cart = cart;
   const { count, total } = cartSummary(cart);
-  res.json({ success: true, cartCount: count, cartTotal: total, message: `${drink.name} added to cart!` });
+  res.json({ success: true, cartCount: count, cartTotal: total, message: `${item.name} added!` });
 });
 
-// Update quantity
+// ── POST /api/cart/update ────────────────────
 router.post('/cart/update', (req, res) => {
   const { id, qty } = req.body;
-  const cart = req.session.cart;
+  const cart = req.session.cart || [];
   const item = cart.find(i => i.id === id);
-  if (!item) return res.status(404).json({ error: 'Item not in cart' });
+  if (!item) return res.status(404).json({ error: 'Item not in cart.' });
 
-  const n = parseInt(qty);
-  if (n <= 0) {
-    req.session.cart = cart.filter(i => i.id !== id);
-  } else {
-    item.qty = n;
-  }
+  const n = parseInt(qty) || 0;
+  req.session.cart = n <= 0 ? cart.filter(i => i.id !== id) : (item.qty = n, cart);
 
   const { count, total } = cartSummary(req.session.cart);
   res.json({ success: true, cartCount: count, cartTotal: total });
 });
 
-// Remove item
+// ── POST /api/cart/remove ────────────────────
 router.post('/cart/remove', (req, res) => {
-  const { id } = req.body;
-  req.session.cart = req.session.cart.filter(i => i.id !== id);
+  req.session.cart = (req.session.cart || []).filter(i => i.id !== req.body.id);
   const { count, total } = cartSummary(req.session.cart);
   res.json({ success: true, cartCount: count, cartTotal: total });
 });
 
-// Clear cart
+// ── POST /api/cart/clear ─────────────────────
 router.post('/cart/clear', (req, res) => {
   req.session.cart = [];
   res.json({ success: true, cartCount: 0, cartTotal: 0 });
 });
 
-// Submit order — saves JSON file to store_order/
+// ── POST /api/order/submit ───────────────────
 router.post('/order/submit', (req, res) => {
   const { name, phone, address, zone, payment, notes } = req.body;
+
   if (!name || !phone || !address) {
     return res.status(400).json({ error: 'Please fill in all required fields.' });
   }
-  if (!req.session.cart || req.session.cart.length === 0) {
+
+  const cart = req.session.cart || [];
+  if (cart.length === 0) {
     return res.status(400).json({ error: 'Your cart is empty!' });
   }
 
-  const ref     = 'N9-' + Date.now().toString(36).toUpperCase();
-  const now     = new Date();
-  const cart    = req.session.cart;
   const { total } = cartSummary(cart);
+  const ref = genRef();
+  const now = new Date().toISOString();
 
-  // Build order record
   const order = {
     ref,
     status:    'pending',
-    placedAt:  now.toISOString(),
+    placedAt:  now,
+    updatedAt: now,
     user: req.session.user
       ? { id: req.session.user.id, username: req.session.user.username }
       : null,
-    customer: { name, phone, address, zone: zone || '' },
-    payment,
-    notes:   notes || '',
-    items:   cart.map(i => ({
-      id:       i.id,
-      name:     i.name,
-      price:    i.price,
-      qty:      i.qty,
-      subtotal: i.price * i.qty
-    })),
+    customer: { name: name.trim(), phone: phone.trim(), address: address.trim(), zone: (zone || '').trim() },
+    payment:  payment || 'cash',
+    notes:    (notes || '').trim(),
+    items:    cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, subtotal: i.price * i.qty })),
     total,
-    eta: '30 minutes'
+    eta: '30 minutes',
   };
 
-  // Atomic save to store_order/<ref>.json (no-op on read-only filesystems like Vercel)
-  try { fs.mkdirSync(STORE_ORDER, { recursive: true }); } catch {}
-  writeJSON(path.join(STORE_ORDER, `${ref}.json`), order);
-
-  // Link ref to user's orders index if logged in
-  if (req.session.user) {
-    try {
-      const idxFile = path.join(__dirname, '../store_users', req.session.user.id, 'orders.json');
-      const existing = readJSON(idxFile) || [];
-      existing.push({ ref, placedAt: now.toISOString(), total, status: 'pending' });
-      writeJSON(idxFile, existing);
-    } catch (err) {
-      console.error('[Order] Failed to update user index:', err.message);
-    }
-  }
-
+  db.saveOrder(order);
   req.session.cart = [];
+
   res.json({
     success:  true,
     orderRef: ref,
     message:  `Order ${ref} confirmed! Your ninja is on the way.`,
-    eta:      '30 minutes'
+    eta:      '30 minutes',
   });
 });
 

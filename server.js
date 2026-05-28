@@ -1,47 +1,49 @@
+'use strict';
 require('dotenv').config();
 
-const express       = require('express');
-const session       = require('express-session'); // Corrected import
-const compression   = require('compression');
-const path          = require('path');
-const fs            = require('fs');
-const crypto        = require('crypto');
+const express     = require('express');
+const session     = require('express-session');
+const compression = require('compression');
+const path        = require('path');
+const fs          = require('fs');
 
 const IS_VERCEL = !!process.env.VERCEL;
 
 const { securityHeaders, sanitizeBody } = require('./middleware/security');
-const { readJSON, writeJSON, readOrder, readAllOrders, readUsers, writeUsers } = require('./utils/db');
+const db = require('./lib/db');
+const { hashPassword, genId } = require('./lib/crypto');
 
 const app = express();
 
-// ── TRUST PROXY (for correct IP behind nginx/reverse proxy) ─
+// ── Trust proxy (Vercel / nginx) ─────────────
 app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// ── GLOBAL MIDDLEWARE ────────────────────────
+// ── Global middleware ─────────────────────────
 app.use(compression());
 app.use(securityHeaders);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '50kb' }));
 app.use(sanitizeBody);
-app.use(express.static(path.join(__dirname, 'public'), {
-  index: false,
-  etag:  true,
-}));
+app.use(express.static(path.join(__dirname, 'public'), { index: false, etag: true }));
 
-// ── SESSION (JSON File-based Storage) ────────
-const FileStore = require('session-file-store')(session);
-const sessionConfig = {
-  secret:            process.env.SESSION_SECRET || 'ninja9it-fallback-secret',
+// ── Sessions ──────────────────────────────────
+const FileStore    = require('session-file-store')(session);
+const SESSION_DIR  = IS_VERCEL
+  ? '/tmp/n9it-sessions'
+  : path.join(__dirname, 'db/sessions');
+
+app.use(session({
+  secret:            process.env.SESSION_SECRET || 'ninja9it-shadow-key-2025',
   resave:            false,
   saveUninitialized: false,
   name:              'n9it.sid',
   store: new FileStore({
-    path: IS_VERCEL ? '/tmp/sessions' : path.join(__dirname, 'data/sessions'),
-    ttl: 86400,
+    path:        SESSION_DIR,
+    ttl:         86400,
     reapInterval: 3600,
-    logFn: () => {},
+    logFn:       () => {},
   }),
   cookie: {
     maxAge:   86400000,
@@ -49,52 +51,43 @@ const sessionConfig = {
     sameSite: 'lax',
     secure:   IS_VERCEL,
   },
-};
-app.use(session(sessionConfig));
+}));
 
-// ── ATTACH CART + USER + SETTINGS TO EVERY RESPONSE ────
-const SETTINGS_FILE = path.join(__dirname, 'data/settings.json');
+// ── Inject globals into every response ────────
 app.use((req, res, next) => {
   if (!req.session.cart) req.session.cart = [];
   res.locals.cart        = req.session.cart;
   res.locals.cartCount   = req.session.cart.reduce((s, i) => s + i.qty, 0);
   res.locals.cartTotal   = req.session.cart.reduce((s, i) => s + i.price * i.qty, 0);
   res.locals.currentUser = req.session.user || null;
-  res.locals.settings    = readJSON(SETTINGS_FILE) || {};
+  res.locals.settings    = db.getSettings();
   next();
 });
 
-// ── ROUTES ───────────────────────────────────
-app.use('/',         require('./routes/auth'));
-app.use('/',         require('./routes/profile'));
-app.use('/admin',    require('./routes/admin'));
-app.use('/',         require('./routes/index'));
-app.use('/services', require('./routes/services'));
-app.use('/menu',     require('./routes/menu'));
-app.use('/order',    require('./routes/order'));
-app.use('/api',      require('./routes/api'));
-app.use('/',         require('./routes/install'));
+// ── Routes ────────────────────────────────────
+app.use('/',        require('./routes/auth'));
+app.use('/',        require('./routes/profile'));
+app.use('/admin',   require('./routes/admin'));
+app.use('/',        require('./routes/index'));
+app.use('/menu',    require('./routes/menu'));
+app.use('/order',   require('./routes/order'));
+app.use('/services',require('./routes/services'));
+app.use('/api',     require('./routes/api'));
+app.use('/',        require('./routes/install'));
 
-// ── MY ORDERS ────────────────────────────────
-const STORE_ORDER_DIR = path.join(__dirname, 'store_order');
-const STORE_USERS_DIR = path.join(__dirname, 'store_users');
-
+// ── My Orders ─────────────────────────────────
 app.get('/my-orders', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
-
-  const indexFile = path.join(STORE_USERS_DIR, req.session.user.id, 'orders.json');
-  const refs      = readJSON(indexFile) || [];
-  const orders    = refs
-    .map(r => readOrder(r.ref, STORE_ORDER_DIR) || r)
+  const orders = db.getAllOrders()
+    .filter(o => o.user && o.user.id === req.session.user.id)
     .sort((a, b) => new Date(b.placedAt) - new Date(a.placedAt));
-
   res.render('my-orders', { title: 'My Orders – Ninja9IT', page: 'my-orders', orders });
 });
 
-// ── ORDER TRACKING ───────────────────────────
+// ── Order tracking ────────────────────────────
 app.get('/track/:ref', (req, res) => {
   const ref   = req.params.ref.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-  const order = readOrder(ref, STORE_ORDER_DIR);
+  const order = db.getOrder(ref);
   if (!order) {
     return res.status(404).render('404', { title: 'Order Not Found – Ninja9IT', page: '404' });
   }
@@ -116,90 +109,62 @@ app.get('/track/:ref', (req, res) => {
   });
 });
 
-// ── WELL-KNOWN (TWA / Android APK) ──────────
+// ── TWA asset links ───────────────────────────
 app.get('/.well-known/assetlinks.json', (req, res) => {
-  const sha256 = process.env.TWA_SHA256_CERT || 'REPLACE_WITH_YOUR_SHA256_CERT_FINGERPRINT';
   res.json([{
-    relation:  ['delegate_permission/common.handle_all_urls'],
+    relation: ['delegate_permission/common.handle_all_urls'],
     target: {
-      namespace:              'android_app',
-      package_name:           'com.ninja9it.app',
-      sha256_cert_fingerprints: [sha256],
+      namespace:                'android_app',
+      package_name:             'com.ninja9it.app',
+      sha256_cert_fingerprints: [process.env.TWA_SHA256_CERT || ''],
     },
   }]);
 });
 
-// ── 404 ──────────────────────────────────────
+// ── 404 ───────────────────────────────────────
 app.use((req, res) =>
   res.status(404).render('404', { title: 'Page Not Found – Ninja9IT', page: '404' })
 );
 
-// ── GLOBAL ERROR HANDLER ─────────────────────
+// ── Global error handler ──────────────────────
 app.use((err, req, res, next) => {
   console.error(`[Error] ${req.method} ${req.url} —`, err.message);
   res.status(500).render('404', { title: 'Server Error – Ninja9IT', page: '404' });
 });
 
-// ── BOOT TASKS ───────────────────────────────
-const USERS_FILE = path.join(__dirname, 'data/users.json');
-const STORE_DIR  = path.join(__dirname, 'store_users');
+// ── Seed admin (local only) ───────────────────
+function seedAdmin() {
+  if (db.hasAdmin()) return;
+  db.createUser({
+    id:        genId('admin'),
+    username:  process.env.ADMIN_USERNAME || 'admin',
+    email:     process.env.ADMIN_EMAIL    || 'admin@ninja9it.com',
+    password:  hashPassword(process.env.ADMIN_PASS || 'Ninja9IT@admin'),
+    avatar:    '🥷',
+    isAdmin:   true,
+    expiresAt: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+  console.log('👑  Admin seeded. Username:', process.env.ADMIN_USERNAME || 'admin');
+}
 
-  function seedAdmin() {
-    const db = readUsers(USERS_FILE);
-    if (db.users.some(u => u.isAdmin)) return;
-
-    const { hashPassword } = require('./utils/crypto');
-    const adminPass = process.env.ADMIN_PASS || 'Ninja9IT@admin';
-    const adminId   = 'admin_001';
-
-    db.users.unshift({
-      id:         adminId,
-      username:   process.env.ADMIN_USERNAME || 'admin',
-      email:      process.env.ADMIN_EMAIL    || 'admin@ninja9it.com',
-      password:   hashPassword(adminPass),
-      createdAt:  new Date().toISOString(),
-      expiresAt:  null,
-      isAdmin:    true,
-      folderPath: `store_users/${adminId}`,
-    });
-
-    writeUsers(USERS_FILE, db);
-    fs.mkdirSync(path.join(STORE_DIR, adminId), { recursive: true });
-    console.log('\n👑  Admin seeded — username: admin\n');
-  }
-
-  function cleanupExpiredUsers() {
-    try {
-      const db     = readUsers(USERS_FILE);
-      const before = db.users.length;
-      const now    = new Date();
-
-      db.users = db.users.filter(u =>
-        u.isAdmin || !u.expiresAt || new Date(u.expiresAt) > now
-      );
-
-      if (db.users.length < before) {
-        writeUsers(USERS_FILE, db);
-        console.log(`[Auth] Removed ${before - db.users.length} expired user(s).`);
-      }
-    } catch (err) {
-      console.error('[Auth] Cleanup error:', err.message);
-    }
-  }
+function purgeExpired() {
+  try { db.purgeExpiredUsers(); } catch (e) { console.error('[Purge] error:', e.message); }
+}
 
 if (!IS_VERCEL) {
   seedAdmin();
-  cleanupExpiredUsers();
-  setInterval(cleanupExpiredUsers, 60 * 60 * 1000);
+  purgeExpired();
+  setInterval(purgeExpired, 60 * 60 * 1000);
 }
 
-// ── START ────────────────────────────────────
-// Export app for Vercel serverless — do not call app.listen() in that case.
+// ── Export for Vercel + listen locally ────────
 module.exports = app;
 
 if (!IS_VERCEL) {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () =>
-    console.log(`\n🥷  Ninja9IT is live → http://localhost:${PORT}\n`)
+    console.log(`\n🥷  Ninja9IT → http://localhost:${PORT}\n`)
   );
 }

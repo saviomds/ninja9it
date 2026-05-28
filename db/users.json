@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": "admin_469cc46d9c698167",
+      "username": "admin",
+      "email": "admin@ninja9it.com",
+      "password": "097ed904cde0c4adc2f3d6c889367171:684ab61f17a1bcf531326ec542b95bcda7926fe9506ba2799c924f0bd88fe7289233ccb7873ad5204ab177548a5df4cc2d061e713997f90fcaa4c9bbe79db38e",
+      "avatar": "🥷",
+      "isAdmin": true,
+      "expiresAt": null,
+      "createdAt": "2026-05-28T17:47:53.291Z",
+      "updatedAt": "2026-05-28T17:47:53.295Z"
+    }
+  ]
+}
