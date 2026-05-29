@@ -6,14 +6,15 @@
 const fs = require('fs');
 
 const DATA = {
-  categories: ['beers', 'spirits', 'wines', 'cocktails', 'softs'],
+  categories: ['beers', 'spirits', 'wines', 'cocktails', 'softs', 'smokes'],
 
   categoryMeta: {
-    beers:     { label: 'Beers',     emoji: '🍺', bg: 'linear-gradient(135deg,#f59e0b,#92400e)', accent: '#f59e0b' },
-    spirits:   { label: 'Spirits',   emoji: '🥃', bg: 'linear-gradient(135deg,#7c3aed,#1e1b4b)', accent: '#7c3aed' },
-    wines:     { label: 'Wines',     emoji: '🍷', bg: 'linear-gradient(135deg,#be123c,#4c0519)', accent: '#be123c' },
-    cocktails: { label: 'Cocktails', emoji: '🍹', bg: 'linear-gradient(135deg,#0891b2,#083344)', accent: '#0891b2' },
-    softs:     { label: 'Softs',     emoji: '🧃', bg: 'linear-gradient(135deg,#16a34a,#052e16)', accent: '#16a34a' },
+    beers:     { label: 'Beers',      emoji: '🍺', bg: 'linear-gradient(135deg,#f59e0b,#92400e)', accent: '#f59e0b' },
+    spirits:   { label: 'Spirits',    emoji: '🥃', bg: 'linear-gradient(135deg,#7c3aed,#1e1b4b)', accent: '#7c3aed' },
+    wines:     { label: 'Wines',      emoji: '🍷', bg: 'linear-gradient(135deg,#be123c,#4c0519)', accent: '#be123c' },
+    cocktails: { label: 'Cocktails',  emoji: '🍹', bg: 'linear-gradient(135deg,#0891b2,#083344)', accent: '#0891b2' },
+    softs:     { label: 'Softs',      emoji: '🧃', bg: 'linear-gradient(135deg,#16a34a,#052e16)', accent: '#16a34a' },
+    smokes:    { label: 'Cigarettes', emoji: '🚬', bg: 'linear-gradient(135deg,#57534e,#1c1917)', accent: '#a8a29e' },
   },
 
   items: {
@@ -56,6 +57,14 @@ const DATA = {
       { id:'red-bull',       name:'Red Bull',          price:95,  tag:'Energy',     emoji:'⚡', gradient:'linear-gradient(135deg,#e2e8f0,#1e40af)', desc:'The classic energy drink. Wings guaranteed.',                        isLocal:false, popular:false, category:'softs' },
       { id:'lemon-squash',   name:'Lemon Squash',      price:55,  tag:'Refresh',    emoji:'🍋', gradient:'linear-gradient(135deg,#fef08a,#16a34a)', desc:'Fresh-squeezed lemon with sparkling water.',                         isLocal:false, popular:false, category:'softs' },
       { id:'virgin-mojito',  name:'Virgin Mojito',     price:120, tag:'Mocktail',   emoji:'🌿', gradient:'linear-gradient(135deg,#4ade80,#052e16)', desc:'Fresh mint, lime, cane sugar, sparkling water. Zero alcohol.',       isLocal:false, popular:false, category:'softs' },
+    ],
+    smokes: [
+      { id:'marlboro-red',    name:'Marlboro Red',       price:95,  tag:'Full Flavour', emoji:'🚬', gradient:'linear-gradient(135deg,#dc2626,#1c1917)', desc:'Classic full-flavour cigarette. Iconic worldwide blend.',           isLocal:false, popular:true,  category:'smokes' },
+      { id:'marlboro-lights', name:'Marlboro Lights',    price:95,  tag:'Lights',       emoji:'🚬', gradient:'linear-gradient(135deg,#f59e0b,#1c1917)', desc:'Smooth and light — the gold standard for light smokers.',          isLocal:false, popular:true,  category:'smokes' },
+      { id:'lucky-strike',    name:'Lucky Strike Red',   price:90,  tag:'Full Flavour', emoji:'🚬', gradient:'linear-gradient(135deg,#b45309,#1c1917)', desc:'Bold American blend with a rich, robust taste.',                   isLocal:false, popular:false, category:'smokes' },
+      { id:'rothmans',        name:'Rothmans Blue',      price:85,  tag:'Lights',       emoji:'🚬', gradient:'linear-gradient(135deg,#1d4ed8,#1c1917)', desc:'Smooth international blend — popular across the island.',          isLocal:false, popular:false, category:'smokes' },
+      { id:'l-and-m',         name:'L&M Red Label',      price:80,  tag:'Budget',       emoji:'🚬', gradient:'linear-gradient(135deg,#991b1b,#1c1917)', desc:'Affordable full-flavour cigarette with consistent quality.',       isLocal:false, popular:false, category:'smokes' },
+      { id:'dunhill',         name:'Dunhill Fine Cut',   price:105, tag:'Premium',      emoji:'🚬', gradient:'linear-gradient(135deg,#78350f,#1c1917)', desc:'Premium English blend — refined, smooth, distinguished.',          isLocal:false, popular:false, category:'smokes' },
     ],
   },
 };
