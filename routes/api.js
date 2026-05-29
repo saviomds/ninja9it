@@ -116,6 +116,15 @@ router.post('/order/submit', (req, res) => {
   db.saveOrder(order);
   req.session.cart = [];
 
+  // Save delivery details to user profile so the form pre-fills next time
+  if (req.session.user) {
+    db.updateUser(req.session.user.id, {
+      phone:   name.trim() ? phone.trim()   : undefined,
+      address: address.trim() || undefined,
+      zone:    zone ? zone.trim() : undefined,
+    });
+  }
+
   res.json({
     success:  true,
     orderRef: ref,

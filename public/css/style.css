@@ -503,6 +503,59 @@ footer{background:#050505;border-top:1px solid var(--border)}
 }
 
 /* ══════════════════════════════════════════
+   CART — MOBILE ITEM LAYOUT
+   Fixes overlapping/cramped rows on small screens.
+   Switches from single flex-row to a 2-row grid:
+     Row 1: emoji | name+price | ✕
+     Row 2:  "    | qty        | subtotal
+══════════════════════════════════════════ */
+@media(max-width:600px){
+  .order-section{padding:24px 14px 60px}
+  .cart-column{padding:16px}
+  .cart-header h2{font-size:.95rem}
+
+  /* 2-row grid layout for each cart item */
+  .cart-item{
+    display:grid;
+    grid-template-columns:38px 1fr auto;
+    grid-template-rows:auto auto;
+    grid-template-areas:
+      "visual info   remove"
+      "visual qty    sub";
+    gap:4px 10px;
+    padding:10px;
+    align-items:center;
+  }
+  .ci-visual {
+    grid-area:visual;
+    width:38px;height:38px;font-size:1.25rem;
+    align-self:center;
+  }
+  .ci-info   { grid-area:info;  min-width:0; }
+  .ci-remove { grid-area:remove; align-self:start; margin-top:2px; }
+  .ci-qty    { grid-area:qty;   }
+  .ci-subtotal{
+    grid-area:sub;
+    min-width:unset;
+    font-size:.85rem;
+    text-align:right;
+  }
+
+  /* tighter qty buttons */
+  .qty-btn{width:26px;height:26px;font-size:.85rem}
+  .qty-val{font-size:.85rem;min-width:18px;text-align:center}
+
+  /* totals + continue link */
+  .cart-total-row{font-size:.82rem}
+  .total-final{font-size:.9rem}
+  .continue-shopping{font-size:.78rem;margin-top:4px}
+
+  /* form padding */
+  .order-form{padding:18px}
+  .form-section-title{font-size:.72rem}
+}
+
+/* ══════════════════════════════════════════
    AUTH PAGES  (login · register)
 ══════════════════════════════════════════ */
 .auth-page { background: var(--black); }
