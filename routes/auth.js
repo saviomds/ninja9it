@@ -47,7 +47,12 @@ router.post('/login', authLimiter, (req, res) => {
     isAdmin:  user.isAdmin,
     avatar:   user.avatar || '🥷',
   };
-  res.redirect('/');
+  res.render('login', {
+    error: null, success: true,
+    welcomeUser:   user.username,
+    welcomeAvatar: user.avatar || '🥷',
+    page: 'login', title: 'Login – Ninja9IT',
+  });
 });
 
 // ── GET /register ────────────────────────────
@@ -96,7 +101,12 @@ router.post('/register', authLimiter, (req, res) => {
     isAdmin:  false,
     avatar:   newUser.avatar,
   };
-  res.redirect('/');
+  res.render('register', {
+    error: null, success: true,
+    welcomeUser:   newUser.username,
+    welcomeAvatar: newUser.avatar,
+    page: 'register', title: 'Register – Ninja9IT',
+  });
 });
 
 // ── GET /logout ──────────────────────────────

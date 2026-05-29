@@ -151,8 +151,9 @@
   });
 })();
 
-// ── SMOKE CANVAS (loader only) ─────────────
+// ── SMOKE CANVAS (splash only) ─────────────
 (function () {
+  if (sessionStorage.getItem('n9_splash')) return;
   const canvas = document.getElementById('smokeCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -191,26 +192,34 @@
   window._stopSmoke = () => { running = false; };
 })();
 
-// ── LOADER ────────────────────────────────
+// ── SPLASH (session-aware — shows on every fresh app launch) ──
 (function () {
-  if (typeof SHOW_LOADER === 'undefined' || !SHOW_LOADER) return;
   const loader = document.getElementById('loader');
   if (!loader) return;
+
+  // Returning page navigation in same session — skip instantly
+  if (sessionStorage.getItem('n9_splash')) {
+    loader.style.display = 'none';
+    return;
+  }
+
+  // First load this session — mark launched and run animation
+  sessionStorage.setItem('n9_splash', '1');
+
   const fill = document.getElementById('progressFill');
   const pct  = document.getElementById('progressPct');
-  const page = document.getElementById('__body__') || document.body;
-  const DURATION = 2800, start = performance.now();
+  const DURATION = 2000, start = performance.now();
 
   function tick(now) {
     const p = Math.min(100, ((now - start) / DURATION) * 100);
-    fill.style.width = p + '%';
-    pct.textContent  = Math.floor(p) + '%';
+    if (fill) fill.style.width = p + '%';
+    if (pct)  pct.textContent  = Math.floor(p) + '%';
     if (p < 100) { requestAnimationFrame(tick); return; }
     setTimeout(() => {
       window._stopSmoke?.();
       loader.classList.add('fade-out');
       setTimeout(() => { loader.style.display = 'none'; initReveal(); }, 800);
-    }, 280);
+    }, 220);
   }
   requestAnimationFrame(tick);
 })();
@@ -514,7 +523,10 @@ document.getElementById('orderSuccessModal')?.addEventListener('click', function
 })();
 
 // ── SCROLL REVEAL ─────────────────────────
+let _revealDone = false;
 function initReveal() {
+  if (_revealDone) return;
+  _revealDone = true;
   const els = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => {
@@ -627,7 +639,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
 // ── INIT ──────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof SHOW_LOADER === 'undefined' || !SHOW_LOADER) initReveal();
+  initReveal();
 
   initAddToCart();
   initQtyControls();

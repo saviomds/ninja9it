@@ -55,6 +55,7 @@ ul{list-style:none}
 ══════════════════════════════════════════ */
 #loader{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;align-items:center;justify-content:center;transition:opacity .75s ease,visibility .75s ease}
 #loader.fade-out{opacity:0;visibility:hidden;pointer-events:none}
+.splash-skip #loader{display:none!important}
 #smokeCanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .loader-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:24px}
 .loader-logo-wrap{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center}
@@ -617,6 +618,22 @@ footer{background:#050505;border-top:1px solid var(--border)}
 .auth-switch a:hover { text-decoration: underline; }
 
 .auth-notice { text-align: center; color: rgba(255,255,255,.25); font-size: .78rem; margin-top: 12px; }
+
+/* ── Auth Success Card ──────────────────────── */
+.auth-success-overlay{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.auth-success-card{background:linear-gradient(145deg,#161616,#0d0d0d);border:1px solid rgba(230,57,70,.35);border-radius:22px;padding:44px 36px 38px;text-align:center;max-width:380px;width:90%;box-shadow:0 0 60px rgba(230,57,70,.15);animation:ascPop .45s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes ascPop{from{opacity:0;transform:scale(.82) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.asc-avatar{font-size:4rem;margin-bottom:4px;display:block;animation:ascBounce .6s .2s ease both}
+@keyframes ascBounce{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.asc-tick{font-size:1.8rem;margin-bottom:14px;display:block}
+.auth-success-card h2{font-family:var(--fh);font-size:1.35rem;font-weight:900;margin-bottom:4px}
+.auth-success-card h2 span{color:var(--red)}
+.asc-sub{color:var(--text-dim);font-size:.85rem;margin-bottom:18px}
+.asc-guide{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;margin-bottom:18px;text-align:left;display:flex;flex-direction:column;gap:8px}
+.asc-guide-item{font-size:.82rem;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px}
+.asc-redirect{font-size:.78rem;color:rgba(255,255,255,.3);margin-bottom:10px}
+.asc-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;width:100%}
+.asc-bar-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:0;border-radius:2px;box-shadow:0 0 8px rgba(230,57,70,.6);transition:width .05s linear}
 
 /* ── Avatar Picker ──────────────────────────── */
 .avatar-picker-wrap {

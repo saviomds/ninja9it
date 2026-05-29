@@ -3,6 +3,7 @@
 <head><%- include('partials/head') %></head>
 <body class="page-inner auth-page">
 
+<%- include('partials/splash') %>
 <%- include('partials/navbar') %>
 
 <section class="auth-section">
@@ -93,9 +94,39 @@
   </div>
 </section>
 
+<% if (locals.success) { %>
+<div class="auth-success-overlay" id="registerSuccess">
+  <div class="auth-success-card">
+    <span class="asc-avatar"><%= locals.welcomeAvatar || '🥷' %></span>
+    <span class="asc-tick">🎉</span>
+    <h2>Ninja account ready, <span><%= locals.welcomeUser || '' %></span>!</h2>
+    <p class="asc-sub">You've joined the shadow network. Here's your briefing:</p>
+    <div class="asc-guide">
+      <div class="asc-guide-item">🍺 Browse 200+ drinks and place your first order</div>
+      <div class="asc-guide-item">📍 Track your delivery in real-time</div>
+      <div class="asc-guide-item">⏳ Account active for 48 hours — use it wisely</div>
+    </div>
+    <p class="asc-redirect">Taking you to home base…</p>
+    <div class="asc-bar"><div class="asc-bar-fill" id="ascFill"></div></div>
+  </div>
+</div>
+<script>
+(function(){
+  var fill = document.getElementById('ascFill');
+  var start = Date.now(), dur = 3200;
+  function tick() {
+    var p = Math.min(100, (Date.now()-start)/dur*100);
+    fill.style.width = p + '%';
+    if (p < 100) requestAnimationFrame(tick);
+    else window.location.href = '/';
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+<% } %>
+
 <%- include('partials/footer') %>
 <%- include('partials/callwidget') %>
-<script>const SHOW_LOADER = false;</script>
 <script src="/js/main.js"></script>
 <script>
 (function(){

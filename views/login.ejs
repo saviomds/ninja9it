@@ -3,6 +3,7 @@
 <head><%- include('partials/head') %></head>
 <body class="page-inner auth-page">
 
+<%- include('partials/splash') %>
 <%- include('partials/navbar') %>
 
 <section class="auth-section">
@@ -48,9 +49,39 @@
   </div>
 </section>
 
+<% if (locals.success) { %>
+<div class="auth-success-overlay" id="loginSuccess">
+  <div class="auth-success-card">
+    <span class="asc-avatar"><%= locals.welcomeAvatar || '🥷' %></span>
+    <span class="asc-tick">✅</span>
+    <h2>Welcome back, <span><%= locals.welcomeUser || '' %></span>!</h2>
+    <p class="asc-sub">You're in the dojo. Here's what you can do:</p>
+    <div class="asc-guide">
+      <div class="asc-guide-item">🍺 Browse the menu and add to cart</div>
+      <div class="asc-guide-item">📍 Track your orders in real-time</div>
+      <div class="asc-guide-item">🥷 View your mission history</div>
+    </div>
+    <p class="asc-redirect">Heading to home base…</p>
+    <div class="asc-bar"><div class="asc-bar-fill" id="ascFill"></div></div>
+  </div>
+</div>
+<script>
+(function(){
+  var fill = document.getElementById('ascFill');
+  var start = Date.now(), dur = 2800;
+  function tick() {
+    var p = Math.min(100, (Date.now()-start)/dur*100);
+    fill.style.width = p + '%';
+    if (p < 100) requestAnimationFrame(tick);
+    else window.location.href = '/';
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+<% } %>
+
 <%- include('partials/footer') %>
 <%- include('partials/callwidget') %>
-<script>const SHOW_LOADER = false;</script>
 <script src="/js/main.js"></script>
 </body>
 </html>
