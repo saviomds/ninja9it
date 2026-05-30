@@ -1,5 +1,21 @@
 {
-  "items": [],
+  "items": [
+    {
+      "id": "cprod_b71e61774a4c",
+      "name": "Johnnie walker blonde",
+      "category": "spirits",
+      "price": 2000,
+      "tag": "Premuim",
+      "emoji": "📦",
+      "gradient": "linear-gradient(135deg,#1a1a1a,#333)",
+      "desc": " a lighter, sweeter, and more approachable blended Scotch whisky ",
+      "isLocal": false,
+      "popular": true,
+      "image": "/uploads/products/prod_74c47c65aca1.jpg",
+      "createdAt": "2026-05-30T15:26:40.391Z",
+      "updatedAt": "2026-05-30T15:27:00.336Z"
+    }
+  ],
   "hidden": [
     "heineken",
     "guinness",
@@ -34,6 +50,9 @@
     "marlboro-red",
     "marlboro-lights",
     "lucky-strike",
-    "l-and-m"
-  ]
+    "l-and-m",
+    "green-island-rum",
+    "chamarel-rum"
+  ],
+  "overrides": {}
 }

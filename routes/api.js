@@ -14,8 +14,10 @@ function findItem(id) {
 
 function mergedMenu() {
   const { items: builtIn } = catalog;
-  const { items: custom, hidden, deleted } = db.getProducts();
-  const allBuiltIn = Object.values(builtIn).flat().filter(d => !hidden.includes(d.id) && !deleted.includes(d.id));
+  const { items: custom, hidden, deleted, overrides } = db.getProducts();
+  const allBuiltIn = Object.values(builtIn).flat()
+    .filter(d => !hidden.includes(d.id) && !deleted.includes(d.id))
+    .map(d => overrides[d.id]?.image ? { ...d, image: overrides[d.id].image } : d);
   return { items: allBuiltIn, products: custom };
 }
 

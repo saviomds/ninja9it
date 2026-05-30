@@ -71,20 +71,34 @@
       <% } else { %>
       <div class="admin-products-grid">
         <% visibleItems.forEach(function(p) { %>
-        <div class="admin-product-card product-card"
+        <div class="admin-product-card product-card" data-id="<%= p.id %>"
              data-search="<%= (p.name+p.category+(p.tag||'')).toLowerCase() %>">
-          <div class="apc-visual" style="background:<%= p.gradient %>">
-            <span class="apc-emoji"><%= p.emoji %></span>
+          <div class="apc-visual" style="background:<%= p.gradient %>; position:relative; overflow:hidden">
+            <% if (overrides[p.id] && overrides[p.id].image) { %>
+            <img src="<%= overrides[p.id].image %>" alt="<%= p.name %>"
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+            <% } else { %>
+            <span class="apc-emoji builtin-emoji"><%= p.emoji %></span>
+            <% } %>
           </div>
           <div class="apc-info">
             <div class="builtin-badge">Built-in</div>
             <div class="apc-name"><%= p.name %></div>
             <div class="apc-price">Rs <%= p.price %></div>
             <div style="font-size:.72rem;color:#555;margin-bottom:8px"><%= p.tag %></div>
-            <div class="apc-actions">
+            <div class="apc-actions" style="flex-wrap:wrap;gap:5px">
+              <label class="btn-admin ghost sm" style="cursor:pointer;margin:0" title="Upload image">
+                📸
+                <input type="file" accept="image/*" style="display:none"
+                  onchange="uploadBuiltinImage('<%= p.id %>',this)">
+              </label>
+              <% if (overrides[p.id] && overrides[p.id].image) { %>
+              <button type="button" class="btn-admin ghost sm"
+                onclick="removeBuiltinImage('<%= p.id %>',this.closest('.admin-product-card'))">✕ Img</button>
+              <% } %>
               <button type="button" class="btn-admin danger sm"
                 data-id="<%= p.id %>" data-name="<%= p.name %>"
-                onclick="openBuiltinDelModal(this.dataset.id,this.dataset.name,this.closest('.admin-product-card'))">🗑 Delete</button>
+                onclick="openBuiltinDelModal(this.dataset.id,this.dataset.name,this.closest('.admin-product-card'))">🗑</button>
             </div>
           </div>
         </div>
@@ -157,6 +171,61 @@ function openDelModal(id, name, card) {
 function closeDelModal() { document.getElementById('delModal').classList.remove('open'); }
 document.getElementById('delModalConfirm').addEventListener('click', () => deleteItem(_delUrl, _delCard, closeDelModal));
 document.getElementById('delModal').addEventListener('click', function(e) { if (e.target === this) closeDelModal(); });
+
+// ── Built-in product image upload/remove ────
+async function uploadBuiltinImage(id, input) {
+  if (!input.files[0]) return;
+  const card = input.closest('.admin-product-card');
+  const formData = new FormData();
+  formData.append('image', input.files[0]);
+  try {
+    const res = await fetch('/admin/products/builtin/' + id + '/image', {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: formData,
+    });
+    const data = await res.json();
+    if (data.success) {
+      const visual = card.querySelector('.apc-visual');
+      let img = visual.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
+        const emoji = visual.querySelector('.builtin-emoji');
+        if (emoji) emoji.style.display = 'none';
+        visual.appendChild(img);
+      }
+      img.src = data.image;
+      const actions = card.querySelector('.apc-actions');
+      if (!actions.querySelector('.remove-img-btn')) {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'btn-admin ghost sm remove-img-btn';
+        btn.textContent = '✕ Img';
+        btn.onclick = () => removeBuiltinImage(id, card);
+        actions.insertBefore(btn, actions.children[1]);
+      }
+    }
+  } catch { alert('Upload failed.'); }
+}
+
+async function removeBuiltinImage(id, card) {
+  try {
+    const res = await fetch('/admin/products/builtin/' + id + '/image/remove', {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    });
+    const data = await res.json();
+    if (data.success) {
+      const visual = card.querySelector('.apc-visual');
+      const img = visual.querySelector('img');
+      if (img) img.remove();
+      const emoji = visual.querySelector('.builtin-emoji');
+      if (emoji) emoji.style.display = '';
+      const removeBtn = card.querySelector('.remove-img-btn');
+      if (removeBtn) removeBtn.remove();
+    }
+  } catch { alert('Remove failed.'); }
+}
 
 // ── Built-in product delete ──────────────────
 let _builtinDelCard = null, _builtinDelUrl = '';

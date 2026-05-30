@@ -105,12 +105,12 @@ router.post('/orders/delete-all', (req, res) => {
 
 // ── PRODUCTS ─────────────────────────────────
 router.get('/products', (req, res) => {
-  const { items: custom, hidden, deleted } = db.getProducts();
+  const { items: custom, hidden, deleted, overrides } = db.getProducts();
   res.render('admin/products', {
     title: 'Products – Admin – Ninja9IT', adminPage: 'products', page: 'admin',
     customProducts: custom, builtInItems: catalog.items,
     categoryMeta: catalog.categoryMeta, categories: catalog.categories,
-    hiddenBuiltins: hidden, deletedBuiltins: deleted, pendingCount: pendingCount(),
+    hiddenBuiltins: hidden, deletedBuiltins: deleted, overrides, pendingCount: pendingCount(),
   });
 });
 
@@ -210,6 +210,37 @@ router.post('/products/builtin/:id/delete', (req, res) => {
   const pdb = db.getProducts();
   if (!pdb.deleted.includes(req.params.id)) pdb.deleted.push(req.params.id);
   db.saveProducts(pdb);
+  if (req.headers['x-requested-with'] === 'XMLHttpRequest') return res.json({ success: true });
+  res.redirect('/admin/products');
+});
+
+router.post('/products/builtin/:id/image', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    if (req.headers['x-requested-with'] === 'XMLHttpRequest') return res.status(400).json({ error: 'No image' });
+    return res.redirect('/admin/products');
+  }
+  const pdb = db.getProducts();
+  if (!pdb.overrides) pdb.overrides = {};
+  if (pdb.overrides[req.params.id]?.image) {
+    const old = path.join(__dirname, '../public', pdb.overrides[req.params.id].image);
+    if (fs.existsSync(old)) try { fs.unlinkSync(old); } catch {}
+  }
+  if (!pdb.overrides[req.params.id]) pdb.overrides[req.params.id] = {};
+  pdb.overrides[req.params.id].image = `/uploads/products/${req.file.filename}`;
+  db.saveProducts(pdb);
+  if (req.headers['x-requested-with'] === 'XMLHttpRequest') return res.json({ success: true, image: pdb.overrides[req.params.id].image });
+  res.redirect('/admin/products');
+});
+
+router.post('/products/builtin/:id/image/remove', (req, res) => {
+  const pdb = db.getProducts();
+  if (pdb.overrides?.[req.params.id]?.image) {
+    const f = path.join(__dirname, '../public', pdb.overrides[req.params.id].image);
+    if (fs.existsSync(f)) try { fs.unlinkSync(f); } catch {}
+    delete pdb.overrides[req.params.id].image;
+    if (!Object.keys(pdb.overrides[req.params.id]).length) delete pdb.overrides[req.params.id];
+    db.saveProducts(pdb);
+  }
   if (req.headers['x-requested-with'] === 'XMLHttpRequest') return res.json({ success: true });
   res.redirect('/admin/products');
 });

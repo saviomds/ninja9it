@@ -46,8 +46,13 @@
     <div class="drinks-grid">
       <% drinks[activeCat].forEach(function(drink, i) { %>
       <div class="drink-card reveal" style="animation-delay:<%= i*0.06 %>s">
-        <div class="drink-visual" style="background:<%= drink.gradient %>">
+        <div class="drink-visual" style="background:<%= drink.gradient %>; position:relative; overflow:hidden">
+          <% if (drink.image) { %>
+          <img src="<%= drink.image %>" alt="<%= drink.name %>"
+            style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+          <% } else { %>
           <span class="drink-emoji"><%= drink.emoji %></span>
+          <% } %>
           <div class="drink-visual-overlay"></div>
           <% if (drink.isLocal) { %>
           <span class="local-badge">🇲🇺 Local</span>

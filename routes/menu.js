@@ -6,11 +6,13 @@ const db      = require('../lib/db');
 
 router.get('/', (req, res) => {
   const cat = catalog.categories.includes(req.query.cat) ? req.query.cat : 'beers';
-  const { items: custom, hidden, deleted } = db.getProducts();
+  const { items: custom, hidden, deleted, overrides } = db.getProducts();
 
   const merged = {};
   catalog.categories.forEach(c => {
-    merged[c] = (catalog.items[c] || []).filter(d => !hidden.includes(d.id) && !deleted.includes(d.id));
+    merged[c] = (catalog.items[c] || [])
+      .filter(d => !hidden.includes(d.id) && !deleted.includes(d.id))
+      .map(d => overrides[d.id]?.image ? { ...d, image: overrides[d.id].image } : d);
   });
   custom.forEach(p => {
     if (!merged[p.category]) merged[p.category] = [];
