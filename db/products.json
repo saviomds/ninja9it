@@ -1,4 +1,39 @@
 {
   "items": [],
-  "hidden": []
+  "hidden": [
+    "heineken",
+    "guinness",
+    "corona-extra",
+    "chamarel-rum",
+    "marlboro-red",
+    "marlboro-lights",
+    "lucky-strike",
+    "rothmans",
+    "l-and-m"
+  ],
+  "deleted": [
+    "stella-artois",
+    "heineken",
+    "corona-extra",
+    "hennessy-vs",
+    "jameson",
+    "grey-goose",
+    "chivas-regal",
+    "malbec-reserve",
+    "moet-chandon",
+    "shiraz-classic",
+    "rose-provencal",
+    "isle-punch",
+    "mango-katana",
+    "dark-striker",
+    "cane-warrior",
+    "tropical-juice",
+    "perrier",
+    "red-bull",
+    "lemon-squash",
+    "marlboro-red",
+    "marlboro-lights",
+    "lucky-strike",
+    "l-and-m"
+  ]
 }

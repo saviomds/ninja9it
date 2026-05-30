@@ -71,10 +71,16 @@
               </td>
               <td>
                 <% if (!u.isAdmin) { %>
-                <form method="POST" action="/admin/users/<%= u.id %>/delete"
-                      onsubmit="return confirm('Delete user <%= u.username %>?')">
-                  <button type="submit" class="btn-admin danger sm">🗑</button>
-                </form>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <form method="POST" action="/admin/users/<%= u.id %>/promote"
+                        onsubmit="return confirm('Promote <%= u.username %> to Admin? This gives full access.')">
+                    <button type="submit" class="btn-admin ghost sm" title="Promote to Admin">👑</button>
+                  </form>
+                  <form method="POST" action="/admin/users/<%= u.id %>/delete"
+                        onsubmit="return confirm('Delete user <%= u.username %>?')">
+                    <button type="submit" class="btn-admin danger sm">🗑</button>
+                  </form>
+                </div>
                 <% } else { %>
                 <span style="font-size:.72rem;color:#444">Protected</span>
                 <% } %>

@@ -46,7 +46,7 @@
               <a href="/admin/products/<%= p.id %>/edit" class="btn-admin ghost sm">✏️ Edit</a>
               <button type="button" class="btn-admin danger sm"
                 data-id="<%= p.id %>" data-name="<%= p.name %>"
-                onclick="openDelModal(this.dataset.id,this.dataset.name)">🗑 Delete</button>
+                onclick="openDelModal(this.dataset.id,this.dataset.name,this.closest('.admin-product-card'))">🗑 Delete</button>
             </div>
           </div>
         </div>
@@ -55,21 +55,26 @@
       <% } %>
 
       <!-- Built-in Products by Category -->
-      <% categories.forEach(function(cat) { %>
+      <% categories.forEach(function(cat) {
+           const visibleItems = builtInItems[cat].filter(function(p) { return !deletedBuiltins.includes(p.id); });
+      %>
       <div class="admin-section-header" style="margin-top:12px">
         <h2><%= categoryMeta[cat].emoji %> <%= categoryMeta[cat].label %>
-          <span style="color:#555;font-size:.8rem;font-weight:400">(<%= builtInItems[cat].length %>) — built-in</span>
+          <span style="color:#555;font-size:.8rem;font-weight:400">(<%= visibleItems.length %>) — built-in</span>
         </h2>
       </div>
+      <% if (!visibleItems.length) { %>
+      <div class="admin-empty" style="background:#111;border:1px dashed #222;border-radius:13px;margin-bottom:22px">
+        <div class="empty-icon">🗑</div>
+        <p style="color:#555">All products in this category have been deleted.</p>
+      </div>
+      <% } else { %>
       <div class="admin-products-grid">
-        <% builtInItems[cat].forEach(function(p) {
-             const isHidden = hiddenBuiltins.includes(p.id);
-        %>
-        <div class="admin-product-card product-card <%= isHidden ? 'apc--hidden' : '' %>"
+        <% visibleItems.forEach(function(p) { %>
+        <div class="admin-product-card product-card"
              data-search="<%= (p.name+p.category+(p.tag||'')).toLowerCase() %>">
           <div class="apc-visual" style="background:<%= p.gradient %>">
             <span class="apc-emoji"><%= p.emoji %></span>
-            <% if (isHidden) { %><span class="apc-hidden-badge">Hidden</span><% } %>
           </div>
           <div class="apc-info">
             <div class="builtin-badge">Built-in</div>
@@ -77,20 +82,15 @@
             <div class="apc-price">Rs <%= p.price %></div>
             <div style="font-size:.72rem;color:#555;margin-bottom:8px"><%= p.tag %></div>
             <div class="apc-actions">
-              <% if (isHidden) { %>
-              <form method="POST" action="/admin/products/builtin/<%= p.id %>/restore">
-                <button type="submit" class="btn-admin ghost sm">👁 Restore</button>
-              </form>
-              <% } else { %>
-              <form method="POST" action="/admin/products/builtin/<%= p.id %>/hide">
-                <button type="submit" class="btn-admin danger sm">🚫 Hide</button>
-              </form>
-              <% } %>
+              <button type="button" class="btn-admin danger sm"
+                data-id="<%= p.id %>" data-name="<%= p.name %>"
+                onclick="openBuiltinDelModal(this.dataset.id,this.dataset.name,this.closest('.admin-product-card'))">🗑 Delete</button>
             </div>
           </div>
         </div>
         <% }); %>
       </div>
+      <% } %>
       <% }); %>
 
     </div>
@@ -110,7 +110,19 @@
     </div>
   </div>
 </div>
-<form method="POST" id="delForm" action="" style="display:none"></form>
+<!-- Delete Built-in Product Modal -->
+<div class="admin-modal-overlay" id="builtinDelModal">
+  <div class="admin-modal del-modal">
+    <div class="del-modal-icon">🗑</div>
+    <h3>Delete Built-in Product?</h3>
+    <p><span class="del-modal-ref" id="builtinDelModalName"></span></p>
+    <p class="del-modal-warn">This product will be permanently removed from the catalog.</p>
+    <div class="admin-modal-actions">
+      <button class="btn-admin ghost" onclick="closeBuiltinDelModal()">Cancel</button>
+      <button class="btn-admin danger" id="builtinDelModalConfirm">Delete</button>
+    </div>
+  </div>
+</div>
 
 <script>
 function filterCards() {
@@ -120,14 +132,42 @@ function filterCards() {
   });
 }
 
-function openDelModal(id, name) {
+function removeCard(card) {
+  card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.9)';
+  setTimeout(() => card.remove(), 260);
+}
+
+async function deleteItem(url, card, closeModal) {
+  closeModal();
+  try {
+    const res = await fetch(url, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+    if (res.ok) { removeCard(card); } else { location.reload(); }
+  } catch { location.reload(); }
+}
+
+// ── Custom product delete ────────────────────
+let _delCard = null, _delUrl = '';
+function openDelModal(id, name, card) {
+  _delCard = card; _delUrl = '/admin/products/' + id + '/delete';
   document.getElementById('delModalName').textContent = name;
-  document.getElementById('delForm').action = '/admin/products/' + id + '/delete';
   document.getElementById('delModal').classList.add('open');
 }
 function closeDelModal() { document.getElementById('delModal').classList.remove('open'); }
-document.getElementById('delModalConfirm').addEventListener('click', () => document.getElementById('delForm').submit());
+document.getElementById('delModalConfirm').addEventListener('click', () => deleteItem(_delUrl, _delCard, closeDelModal));
 document.getElementById('delModal').addEventListener('click', function(e) { if (e.target === this) closeDelModal(); });
+
+// ── Built-in product delete ──────────────────
+let _builtinDelCard = null, _builtinDelUrl = '';
+function openBuiltinDelModal(id, name, card) {
+  _builtinDelCard = card; _builtinDelUrl = '/admin/products/builtin/' + id + '/delete';
+  document.getElementById('builtinDelModalName').textContent = name;
+  document.getElementById('builtinDelModal').classList.add('open');
+}
+function closeBuiltinDelModal() { document.getElementById('builtinDelModal').classList.remove('open'); }
+document.getElementById('builtinDelModalConfirm').addEventListener('click', () => deleteItem(_builtinDelUrl, _builtinDelCard, closeBuiltinDelModal));
+document.getElementById('builtinDelModal').addEventListener('click', function(e) { if (e.target === this) closeBuiltinDelModal(); });
 </script>
 </body>
 </html>

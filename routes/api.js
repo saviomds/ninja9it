@@ -14,8 +14,8 @@ function findItem(id) {
 
 function mergedMenu() {
   const { items: builtIn } = catalog;
-  const { items: custom, hidden } = db.getProducts();
-  const allBuiltIn = Object.values(builtIn).flat().filter(d => !hidden.includes(d.id));
+  const { items: custom, hidden, deleted } = db.getProducts();
+  const allBuiltIn = Object.values(builtIn).flat().filter(d => !hidden.includes(d.id) && !deleted.includes(d.id));
   return { items: allBuiltIn, products: custom };
 }
 

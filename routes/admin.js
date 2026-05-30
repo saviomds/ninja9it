@@ -39,10 +39,12 @@ function pendingCount() {
 router.get('/', (req, res) => {
   const allOrders  = db.getAllOrders();
   const users      = db.getUsers();
-  const { items: custom } = db.getProducts();
+  const { items: custom, deleted } = db.getProducts();
 
   let productCount = custom.length;
-  catalog.categories.forEach(cat => { productCount += (catalog.items[cat] || []).length; });
+  catalog.categories.forEach(cat => {
+    productCount += (catalog.items[cat] || []).filter(p => !deleted.includes(p.id)).length;
+  });
 
   res.render('admin/dashboard', {
     title:        'Dashboard – Admin – Ninja9IT',
@@ -103,12 +105,12 @@ router.post('/orders/delete-all', (req, res) => {
 
 // ── PRODUCTS ─────────────────────────────────
 router.get('/products', (req, res) => {
-  const { items: custom, hidden } = db.getProducts();
+  const { items: custom, hidden, deleted } = db.getProducts();
   res.render('admin/products', {
     title: 'Products – Admin – Ninja9IT', adminPage: 'products', page: 'admin',
     customProducts: custom, builtInItems: catalog.items,
     categoryMeta: catalog.categoryMeta, categories: catalog.categories,
-    hiddenBuiltins: hidden, pendingCount: pendingCount(),
+    hiddenBuiltins: hidden, deletedBuiltins: deleted, pendingCount: pendingCount(),
   });
 });
 
@@ -200,20 +202,15 @@ router.post('/products/:id/delete', (req, res) => {
     pdb.items.splice(idx, 1);
     db.saveProducts(pdb);
   }
+  if (req.headers['x-requested-with'] === 'XMLHttpRequest') return res.json({ success: true });
   res.redirect('/admin/products');
 });
 
-router.post('/products/builtin/:id/hide', (req, res) => {
+router.post('/products/builtin/:id/delete', (req, res) => {
   const pdb = db.getProducts();
-  if (!pdb.hidden.includes(req.params.id)) pdb.hidden.push(req.params.id);
+  if (!pdb.deleted.includes(req.params.id)) pdb.deleted.push(req.params.id);
   db.saveProducts(pdb);
-  res.redirect('/admin/products');
-});
-
-router.post('/products/builtin/:id/restore', (req, res) => {
-  const pdb = db.getProducts();
-  pdb.hidden = pdb.hidden.filter(id => id !== req.params.id);
-  db.saveProducts(pdb);
+  if (req.headers['x-requested-with'] === 'XMLHttpRequest') return res.json({ success: true });
   res.redirect('/admin/products');
 });
 
@@ -241,11 +238,18 @@ router.get('/users', (req, res) => {
 router.post('/users/:id/delete', (req, res) => {
   const user = db.findUserById(req.params.id);
   if (user && !user.isAdmin) {
-    // Delete all orders belonging to this user
     db.getAllOrders()
       .filter(o => o.user && o.user.id === user.id)
       .forEach(o => db.deleteOrder(o.ref));
     db.deleteUser(user.id);
+  }
+  res.redirect('/admin/users');
+});
+
+router.post('/users/:id/promote', (req, res) => {
+  const user = db.findUserById(req.params.id);
+  if (user && !user.isAdmin) {
+    db.updateUser(user.id, { isAdmin: true, expiresAt: null });
   }
   res.redirect('/admin/users');
 });

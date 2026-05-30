@@ -6,12 +6,11 @@ const db      = require('../lib/db');
 
 router.get('/', (req, res) => {
   const cat = catalog.categories.includes(req.query.cat) ? req.query.cat : 'beers';
-  const { items: custom, hidden } = db.getProducts();
+  const { items: custom, hidden, deleted } = db.getProducts();
 
-  // Merge built-in drinks (filter hidden) with custom products
   const merged = {};
   catalog.categories.forEach(c => {
-    merged[c] = (catalog.items[c] || []).filter(d => !hidden.includes(d.id));
+    merged[c] = (catalog.items[c] || []).filter(d => !hidden.includes(d.id) && !deleted.includes(d.id));
   });
   custom.forEach(p => {
     if (!merged[p.category]) merged[p.category] = [];

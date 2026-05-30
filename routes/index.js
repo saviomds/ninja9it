@@ -4,11 +4,13 @@ const router  = express.Router();
 const catalog = require('../data/drinks');
 const db      = require('../lib/db');
 
-const featured = Object.values(catalog.items).flat().filter(d => d.popular).slice(0, 6);
-
 router.get('/', (req, res) => {
   const firstVisit = !req.session.visited;
   req.session.visited = true;
+
+  const { deleted } = db.getProducts();
+  const featured = Object.values(catalog.items).flat()
+    .filter(d => d.popular && !deleted.includes(d.id)).slice(0, 6);
 
   res.render('index', {
     title:       'Ninja9IT – Stealth Drinks Delivery 🇲🇺',
